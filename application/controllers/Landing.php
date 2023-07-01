@@ -12,6 +12,7 @@ class Landing extends CI_Controller
     public function index()
     {
         $data['berita'] = $this->m_landing->dtBerita();
+        $data['toko'] = $this->m_landing->dtProfilToko();
         $data['title']    = 'Home | AnnisaATK';
         $data['page']    = 'home';
         $this->tampil($data);;

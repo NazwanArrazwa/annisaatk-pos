@@ -203,6 +203,45 @@ if ($page == 'home') {
 
     </section>
 
+    <section class="map section" id="hubungikami">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div id="map">
+                        <div style="width: 100%"><iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=politeknik%20negeri%20banjarmasin+(AnnisaATK%20Banjarmasin)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.maps.ie/distance-area-calculator.html">area maps</a></iframe></div>
+                    </div>
+                </div>
+                <div class="col-lg-10 offset-lg-1 mb-5">
+                    <div class="row">
+                        <?php foreach ($toko as $t) : ?>
+                            <div class="col-lg-4">
+                                <div class="info-item">
+                                    <i class="fa fa-envelope"></i>
+                                    <h4>Email</h4>
+                                    <a href="mailto:<?php echo $t->email; ?>"><?php echo $t->email; ?></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="info-item">
+                                    <i class="fa fa-phone"></i>
+                                    <h4>Phone Number</h4>
+                                    <a href="#"><?php echo $t->no_telp; ?></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="info-item">
+                                    <i class="fa fa-map-marked-alt"></i>
+                                    <h4>Alamat</h4>
+                                    <a href="#"><?php echo $t->alamat; ?></a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 <?php
     //==================================== semua_berita ====================================
 } else if ($page == 'berita_semua') {
@@ -387,42 +426,7 @@ else if ($page == 'hubungiKami') {
         </div>
     </div>
 
-    <section class="map section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div id="map">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2791.78997548554!2d144.9805125252687!3d-37.84132841005892!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad6681f3e9cb7e1%3A0x9d52778f56cab5a8!2sFawkner%20Park!5e1!3m2!1sen!2sth!4v1648201596364!5m2!1sen!2sth" width="100%" height="450px" frameborder="0" style="border:0; border-radius: 5px; position: relative; z-index: 2;" allowfullscreen=""></iframe>
-                    </div>
-                </div>
-                <div class="col-lg-10 offset-lg-1 mb-5">
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <div class="info-item">
-                                <i class="fa fa-envelope"></i>
-                                <h4>Email Address</h4>
-                                <a href="#">info@company.com</a>
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="info-item">
-                                <i class="fa fa-phone"></i>
-                                <h4>Phone Number</h4>
-                                <a href="#">010-020-0340</a>
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="info-item">
-                                <i class="fa fa-map-marked-alt"></i>
-                                <h4>Address</h4>
-                                <a href="#">Victoria, Australia</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
 
 <?php

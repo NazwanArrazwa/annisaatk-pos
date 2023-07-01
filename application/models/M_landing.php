@@ -2,6 +2,16 @@
 
 class M_landing extends CI_Model
 {
+
+    public function dtProfilToko($id = FALSE)
+    {
+
+        $this->db->select('*');
+        $this->db->from('tb_toko');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     public function dtBerita($id = FALSE)
     {
 

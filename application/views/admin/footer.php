@@ -286,30 +286,36 @@
                     diskon = diskonPersen / 100;
                 }
 
-                var total = subtotal - (subtotal * diskon);
+                // Memastikan subtotal adalah angka yang valid
+                if (!isNaN(subtotal)) {
+                    var total = subtotal - (subtotal * diskon);
 
-                // Menetapkan nilai total setelah diskon dengan format mata uang
-                $("#total_input").val("Rp. " + total.toLocaleString('id-ID'));
+                    // Menetapkan nilai total setelah diskon dengan format mata uang
+                    $("#total_input").val("Rp. " + total.toLocaleString('id-ID'));
 
-                var inputBayar = parseFloat($("#input_bayar").val());
+                    var inputBayar = parseFloat($("#input_bayar").val());
 
-                if (inputBayar >= total && total !== 0) {
-                    $("#simpan_transaksi").removeAttr("disabled");
-                } else {
-                    $("#simpan_transaksi").attr("disabled", "disabled");
-                }
-
-                // Jika keranjang kosong, kosongkan nilai input bayar dan input kembali
-                if (subtotal === 0) {
-                    $("#input_bayar").val('');
-                    $("#input_kembali").val('0');
-                } else {
-                    if (inputBayar >= total) {
-                        var kembali = inputBayar - total;
-                        $("#input_kembali").val(kembali);
+                    if (inputBayar >= total && total !== 0) {
+                        $("#simpan_transaksi").removeAttr("disabled");
                     } else {
-                        $("#input_kembali").val("0");
+                        $("#simpan_transaksi").attr("disabled", "disabled");
                     }
+
+                    // Jika keranjang kosong, kosongkan nilai input bayar dan input kembali
+                    if (subtotal === 0) {
+                        $("#input_bayar").val('');
+                        $("#input_kembali").val('0');
+                    } else {
+                        if (inputBayar >= total) {
+                            var kembali = inputBayar - total;
+                            $("#input_kembali").val(kembali);
+                        } else {
+                            $("#input_kembali").val("0");
+                        }
+                    }
+                } else {
+                    // Jika subtotal bukan angka yang valid, atur nilai total_input menjadi kosong
+                    $("#total_input").val('');
                 }
             }
         });

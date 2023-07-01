@@ -22,6 +22,57 @@
 <script src="<?php echo base_url('assets/'); ?>js/tabs.js"></script>
 <script src="<?php echo base_url('assets/'); ?>js/swiper.js"></script>
 <script src="<?php echo base_url('assets/'); ?>js/custom.js"></script>
+<!-- 
+<script>
+    // Fungsi untuk menangani event scroll mouse
+    function smoothScroll(event) {
+        event.preventDefault();
+        var wheelDelta = event.wheelDelta || -event.deltaY || -event.detail;
+        var delta = Math.max(-1, Math.min(1, wheelDelta));
+
+        var scrollDistance = -100; // Jarak scroll per kali scroll mouse (sesuaikan dengan preferensi Anda, dengan nilai negatif untuk mengubah arah scroll)
+        var scrollDuration = 400; // Durasi animasi scroll (sesuaikan dengan preferensi Anda)
+
+        var scrollTarget = window.pageYOffset + delta * scrollDistance;
+        var currentTime = 0;
+        var increment = 60;
+
+        // Fungsi animasi scroll
+        function animateScroll() {
+            currentTime += increment;
+            var easing = easeInOutQuad(currentTime, window.pageYOffset, scrollTarget - window.pageYOffset, scrollDuration);
+            window.scrollTo(0, easing);
+            if (currentTime < scrollDuration) {
+                requestAnimationFrame(animateScroll);
+            }
+        }
+
+        // Fungsi easing untuk animasi scroll
+        function easeInOutQuad(t, b, c, d) {
+            t /= d / 2;
+            if (t < 1) return c / 2 * t * t + b;
+            t--;
+            return -c / 2 * (t * (t - 2) - 1) + b;
+        }
+
+        // Memulai animasi scroll
+        animateScroll();
+    }
+
+    // Menambahkan event listener untuk scroll mouse
+    if (window.addEventListener) {
+        // Untuk browser modern
+        window.addEventListener("wheel", smoothScroll, {
+            passive: false
+        });
+        window.addEventListener("mousewheel", smoothScroll, {
+            passive: false
+        });
+    } else {
+        // Untuk browser lama
+        window.attachEvent("onmousewheel", smoothScroll);
+    }
+</script> -->
 <script>
     setTimeout(function() {
         $('.preloader').fadeOut(1000);

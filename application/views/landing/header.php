@@ -45,14 +45,14 @@ https://templatemo.com/tm-574-mexant
                         </a>
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
-                        <ul class=" nav">
+                        <ul class="nav">
                             <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
                             <li class="scroll-to-section"><a href="#berita">Berita</a></li>
                             <li class="scroll-to-section"><a href="#tentangKami">Tentang Kami</a></li>
                             <!-- <li class="scroll-to-section"><a href="#barang">Barang</a></li>
                             
                             <li class="scroll-to-section"><a href="#testimonials">Testimoni</a></li> -->
-                            <li><a href="<?php echo base_url('landing/hubungi') ?>">Hubungi Kami</a></li>
+                            <li class="scroll-to-section"><a href="#hubungikami">Hubungi Kami</a></li>
                             <!-- <li class="has-sub">
                                 <a href="javascript:void(0)">Pages</a>
                                 <ul class="sub-menu">
