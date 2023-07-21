@@ -12,6 +12,12 @@ class M_landing extends CI_Model
         return $query->result();
     }
 
+    public function getCoordinates()
+    {
+        $query = $this->db->select('latitude, longitude')->get_where('tb_toko', array('id_toko' => 1));
+        return $query->row();
+    }
+
     public function dtBerita($id = FALSE)
     {
 
@@ -22,8 +28,11 @@ class M_landing extends CI_Model
         return $query->result_array();
     }
 
-    public function dtBatasBerita($limit, $start)
+    public function dtBatasBerita($limit, $start, $keyword = null)
     {
+        if ($keyword) {
+            $this->db->like('judul_berita', $keyword);
+        }
         $this->db->order_by('id_berita', 'DESC');
         return $this->db->get('tb_berita', $limit, $start)->result_array();
     }

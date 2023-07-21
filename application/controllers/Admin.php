@@ -18,18 +18,19 @@ class Admin extends CI_Controller
 
     public function login_kah()
     {
-
-        if ($this->session->has_userdata('username') && $this->session->userdata('id_level') == 1)
+        if ($this->session->has_userdata('username') && ($this->session->userdata('id_level') == 1 || $this->session->userdata('id_level') == 2 || $this->session->userdata('id_level') == 3)) {
             return TRUE;
-        else
+        } else {
             $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-        Anda Harus Login Terlebih Dahulu
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-        </div>');
-        redirect(base_url('login'));
+                Anda Harus Login Terlebih Dahulu
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>');
+            redirect(base_url('login'));
+        }
     }
+
 
     //============== DASHBOARD ============//
 
@@ -38,6 +39,7 @@ class Admin extends CI_Controller
         $data['title']    = 'Admin | Home';
         $data['page']    = 'home';
         $data['jml_barang']    = $this->m_umum->jumlah_record_tabel('tb_barang');
+        $data['jml_berita']    = $this->m_umum->jumlah_record_tabel('tb_berita');
         $data['jml_pelanggan'] = $this->m_umum->jumlah_record_tabel('tb_pelanggan', 'nm_pelanggan', ['Umum']);
         $data['jml_supplier']    = $this->m_umum->jumlah_record_tabel('tb_supplier');
         $data['pendapatan_harian'] = $this->m_admin->sum_daily('tb_transaksi');
@@ -65,7 +67,8 @@ class Admin extends CI_Controller
     {
         $data['title']    = 'Admin | Ubah Password';
         $data['page']    = 'changePassword';
-        $data['username'] = $this->db->get_where('tb_user')->row_array();
+        $data['username'] = $this->db->get_where('tb_user', ['id_level' =>
+        $this->session->userdata('id_level')])->row_array();
 
         // Mengatur aturan validasi
         $this->form_validation->set_rules('current_password', 'Password Saat Ini', 'required|trim', array('required' => '%s harus diisi.'));
@@ -80,42 +83,46 @@ class Admin extends CI_Controller
             $current_password = md5($this->input->post('current_password'));
             $new_password = $this->input->post('new_password1');
 
+            // Mendapatkan ID level pengguna
+            $level_id = $data['username']['id_level'];
+
             if ($current_password !== $data['username']['password']) {
                 // Password saat ini tidak cocok
                 $this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            Password Saat Ini Salah
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-            </div>');
+        Password Saat Ini Salah
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+        </div>');
                 redirect(base_url('admin/changePassword'));
             } else {
                 if ($current_password == md5($new_password)) {
                     // Password baru sama dengan password saat ini
                     $this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            Password Yang Baru Tidak Boleh Sama Dengan Password Saat Ini
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-            </div>');
+        Password Yang Baru Tidak Boleh Sama Dengan Password Saat Ini
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+        </div>');
                     redirect(base_url('admin/changePassword'));
                 } else {
-                    // Memperbarui password di database
+                    // Memperbarui password di database berdasarkan ID level
                     $this->db->set('password', md5($new_password));
-                    $this->db->where('username', $data['username']['username']);
+                    $this->db->where('id_level', $level_id);
                     $this->db->update('tb_user');
 
                     $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
-            Password berhasil diubah
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-            </div>');
+        Password berhasil diubah
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+        </div>');
                     redirect(base_url('admin/changePassword'));
                 }
             }
         }
     }
+
 
     //============== KASIR ============//
 
@@ -159,31 +166,55 @@ class Admin extends CI_Controller
     public function addBarangBarcode()
     {
         $barcode = $this->input->post('barcode');
-
         // Lakukan query atau logika untuk mendapatkan informasi barang berdasarkan barcode dari database atau sumber data lainnya
         $barang = $this->db->get_where('tb_barang', array('barcode' => $barcode))->row();
 
         if ($barang) {
-            $data = array(
-                'id' => $barang->barcode, // Gunakan barcode sebagai ID produk
-                'qty' => 1, // Jumlah barang, dapat disesuaikan
-                'price' => $barang->hrg_jual, // Harga barang dari tabel barang
-                'name' => $barang->nm_barang, // Nama barang dari tabel barang
-            );
+            $product_id = $barang->barcode;
+            $product_name = $barang->nm_barang;
+            $quantity = 1; // Jumlah barang, dapat disesuaikan
 
-            $this->cart->insert($data);
-            echo $this->viewKeranjang();
+            $promo = $barang->promo;
+            $barangpromo = ($barang->hrg_jual * $promo) / 100;
+            $product_price = ($barang->hrg_jual - $barangpromo);
+
+            $product_primary = $barang->id_barang;
+
+            // Pengecekan stok menggunakan model ProductModel
+            $is_stock_available = $this->m_admin->checkStock($product_id, $quantity);
+
+            if ($is_stock_available) {
+                // Jumlah yang diinput cukup, tambahkan produk ke keranjang
+                $data = array(
+                    'primary' => $product_primary,
+                    'id' => $product_id,
+                    'name' => $product_name,
+                    'qty' => $quantity,
+                    'price' => $product_price
+                );
+                $this->cart->insert($data);
+
+                // Update stok di database
+                $this->m_admin->updateStock($product_id, $quantity);
+
+                // Tampilkan keranjang belanja yang diperbarui
+                echo $this->viewKeranjang();
+            } else {
+                // Jumlah yang diinput melebihi stok yang tersedia
+                echo 'false';
+            }
         } else {
             // Barang tidak ditemukan, lakukan tindakan yang sesuai, seperti menampilkan pesan error
             $this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            Barang Tidak Ditemukan
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-            </div>');
+        Barang Tidak Ditemukan
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+        </div>');
             echo $this->viewKeranjang();
         }
     }
+
 
 
     public function addBarang()
@@ -192,6 +223,7 @@ class Admin extends CI_Controller
         $product_name = $this->input->post('product_name');
         $quantity = $this->input->post('quantity');
         $product_price = $this->input->post('product_price');
+        $product_primary = $this->input->post('product_primary');
 
         // Pengecekan stok menggunakan model ProductModel
         $is_stock_available = $this->m_admin->checkStock($product_id, $quantity);
@@ -199,6 +231,7 @@ class Admin extends CI_Controller
         if ($is_stock_available) {
             // Jumlah yang diinput cukup, tambahkan produk ke keranjang
             $data = array(
+                'primary' => $product_primary,
                 'id' => $product_id,
                 'name' => $product_name,
                 'qty' => $quantity,
@@ -426,34 +459,35 @@ class Admin extends CI_Controller
         $bayar            = $this->input->post('bayar');
         $kode_transaksi   = $this->input->post('kode_transaksi');
         $kembali          = $this->input->post('kembali');
-        $diskon           = $this->input->post('diskon'); // Get the discount value from the input
-        $no               = 1;
+        $diskon           = $this->input->post('diskon');
+        $nm_pelanggan     = $this->input->post('nm_pelanggan');
+        $kasir     = $this->input->post('kasir');
         $output           = '';
 
         $output .= '<div>';
 
         $output .= '
-        <div style="text-align: center; font-size: 20px; font-weight: bold;">' . $toko->nm_toko . '</div>
-        <div style="text-align: center">' . $kode_transaksi . '</div>
-        <div style="text-align: center">' . $toko->alamat . ' ' . $toko->no_telp . '</div>
-        <div style="text-align: center" id="time_transaction" data-transaction="' . date('Y-m-d  h:i:s') . '">' . date('Y-m-d  h:i:s') . '</div>
+        <div style="text-align: center; font-size: 20px; font-weight: bolder;">' . $toko->nm_toko . '</div>
+        <div style="border-top:1px dashed; border-bottom:1px dashed; margin: 20px 0;">
+        <div style="text-align: center; font-weight: bolder;">Invoice #' . $kode_transaksi . '</div>
+        <div style="text-align: center; font-weight: bolder;">' . $toko->alamat . '</div>
+        <div style="text-align: center; font-weight: bolder;">' . $toko->no_telp . '</div>
+        <div style="text-align: center; font-weight: bolder;" id="time_transaction" data-transaction="' . date('Y-m-d  h:i:s') . '">' . date('Y-m-d  h:i:s') . '</div>
     ';
         $output .= '<div style="border-top:1px dashed; border-bottom:1px dashed; margin: 20px 0;">'; // body
 
         $output .= '<div style="display: flex; border-bottom:1px dashed; margin-bottom: 10px;">
-        <div style="width: 10%; font-weight: bold;">No</div>
-        <div style="width: 40%; font-weight: bold;">Nama</div>
-        <div style="width: 15%; font-weight: bold; text-align: center;">Qty</div>
-        <div style="width: 35%; font-weight: bold;">Sub Total</div>
+        <div style="width: 20%; font-weight: bolder;">Nama</div>
+        <div style="width: 40%; font-weight: bolder; text-align: center;">Qty</div>
+        <div style="width: 60%; font-weight: bolder; text-align: right;">Sub Total</div>
     </div>';
 
         foreach ($this->cart->contents() as $row) {
             $output .= '
             <div style="display: flex; margin-bottom: 10px;">
-                <div style="width: 10%;">' . $no++ . '</div>
-                <div style="width: 40%;">' . $row['name'] . '</div>
-                <div style="width: 15%; text-align: center;">' . $row['qty'] . '</div>
-                <div style="width: 35%;">Rp.' . number_format($row['subtotal'], 0, ',', '.')  . '</div>
+                <div style="width: 20%; font-weight: bolder;">' . $row['name'] . '</div>
+                <div style="width: 40%; font-weight: bolder; text-align: center;">' . $row['qty'] . '</div>
+                <div style="width: 60%; font-weight: bolder;  text-align: right;">Rp.' . number_format($row['subtotal'], 0, ',', '.')  . '</div>
             </div>';
         }
 
@@ -469,42 +503,64 @@ class Admin extends CI_Controller
             $total -= $diskon_amount;
         }
 
+
+
         $output .= '
         <div style="display: flex;">
-            <div style="width: 60%; text-align: right;">Total</div>
-            <div style="width: 5%; text-align: center;">:</div>
-            <div style="width: 35%;">Rp.' . number_format($total, 0, ',', '.') . '</div>
+            <div style="width: 60%; font-weight: bolder; text-align: right;">Kasir</div>
+            <div style="width: 5%; font-weight: bolder; text-align: center;">:</div>
+            <div style="width: 35%; font-weight: bolder;">' . $kasir . '</div>
         </div>
     ';
 
         $output .= '
         <div style="display: flex;">
-            <div style="width: 60%; text-align: right;">Bayar</div>
-            <div style="width: 5%; text-align: center;">:</div>
-            <div style="width: 35%;">Rp.' . number_format($bayar, 0, ',', '.') . '</div>
+            <div style="width: 60%; font-weight: bolder; text-align: right;">Customer</div>
+            <div style="width: 5%; font-weight: bolder; text-align: center;">:</div>
+            <div style="width: 35%; font-weight: bolder;">' . $nm_pelanggan . '</div>
+        </div>
+    ';
+
+        $output .= '<br>'; // body
+
+
+        $output .= '
+    <div style="display: flex;">
+        <div style="width: 60%; font-weight: bolder; text-align: right;">Total</div>
+        <div style="width: 5%; font-weight: bolder; text-align: center;">:</div>
+        <div style="width: 35%; font-weight: bolder;">Rp.' . number_format($total, 0, ',', '.') . '</div>
+    </div>
+';
+
+
+        $output .= '
+        <div style="display: flex;">
+            <div style="width: 60%; font-weight: bolder; text-align: right;">Bayar</div>
+            <div style="width: 5%; font-weight: bolder; text-align: center;">:</div>
+            <div style="width: 35%; font-weight: bolder;">Rp.' . number_format($bayar, 0, ',', '.') . '</div>
         </div>
     ';
 
         if ($diskon) {
             $output .= '
             <div style="display: flex;">
-                <div style="width: 60%; text-align: right;">Diskon</div>
-                <div style="width: 5%; text-align: center;">:</div>
-                <div style="width: 35%;">Rp.' . number_format($diskon_amount, 0, ',', '.') . '</div>
+                <div style="width: 60%; font-weight: bolder; text-align: right;">Diskon</div>
+                <div style="width: 5%; font-weight: bolder; text-align: center;">:</div>
+                <div style="width: 35%; font-weight: bolder;">Rp.' . number_format($diskon_amount, 0, ',', '.') . '</div>
             </div>
         ';
         }
 
         $output .= '
         <div style="display: flex;">
-            <div style="width: 60%; text-align: right;">Kembali</div>
-            <div style="width: 5%; text-align: center;">:</div>
-            <div style="width: 35%;">Rp.' . number_format($kembali, 0, ',', '.') . '</div>
+            <div style="width: 60%; font-weight: bolder; text-align: right;">Kembali</div>
+            <div style="width: 5%; font-weight: bolder; text-align: center;">:</div>
+            <div style="width: 35%; font-weight: bolder;">Rp.' . number_format($kembali, 0, ',', '.') . '</div>
         </div>
     ';
 
-        $output .= '<div style="text-align:center; margin: 20px 0;">
-        Terimakasih atas kunjungan anda
+        $output .= '<div style="text-align:center; font-weight: bolder; margin: 20px 0;">
+        Terimakasih atas kunjungan anda, Barang Yang Telah Dibeli Tidak Dapat Dikembalikan, Terima Kasih Sudah Berbelanja Di Toko Annisa ATK Banjarmasin.
     </div>';
 
         // Mengembalikan hasil sebagai response AJAX
@@ -513,52 +569,73 @@ class Admin extends CI_Controller
 
     public function create_transaction()
     {
-
         date_default_timezone_set('Asia/Makassar'); // Set zona waktu ke WITA (Asia/Makassar)
 
-        // $code_transaction = $this->input->post('code_transaction');
-        $kode_transaksi   = $this->input->post('kode_transaksi');
+        $kode_transaksi = $this->input->post('kode_transaksi');
+        $input_bayar = $this->input->post('input_bayar');
+        // $diskon = $this->input->post('diskon');
         $nm_pelanggan = $this->input->post('nm_pelanggan');
-        $response         = [];
+
+        $response = [];
+
         if ($this->cart->contents() !== []) {
             $kasir = $this->session->userdata('id_level');
-            foreach ($this->cart->contents() as $cart) {
 
-                // Menggunakan fungsi di m_admin untuk mendapatkan ID pelanggan berdasarkan nama
-                $id_pelanggan = $this->m_admin->get_pelanggan_id($nm_pelanggan);
+            // Menggunakan fungsi di m_admin untuk mendapatkan ID pelanggan berdasarkan nama
+            $id_pelanggan = $this->m_admin->get_pelanggan_id($nm_pelanggan);
+            $diskon = $this->m_admin->get_diskon($id_pelanggan);
 
-                $res      = $this->m_admin->get_barang_qty($cart['id']);
-                $last_qty = $res->qty; // - $cart['qty']
+            $order = [
+                'kode_transaksi' => $kode_transaksi,
+                'kasir' => $kasir,
+                'waktu' => date('Y-m-d H:i:s'), // Menggunakan format waktu yang benar
+                'jumlah_bayar' => $input_bayar, // Menggunakan total sebagai jumlah bayar
+                'total_hrg' => $this->cart->total(),
+                'total_brg' => $this->cart->total_items(),
+                'id_pelanggan' => $id_pelanggan,
+                'diskon' => $diskon, // Memasukkan diskon yang sesuai jika ada
+            ];
 
-                $order = [
-                    'kode_transaksi'         => $kode_transaksi,
-                    'kasir'                  => $kasir,
-                    'waktu'                  => date('Y-m-d h:i:s'),
-                    'harga'                  => $cart['price'],
-                    'total_brg'              => $cart['qty'],
-                    'id_barang'              => $cart['id'],
-                    'id_pelanggan'           => $id_pelanggan,
-                    'last_qty'                => $last_qty,
+            // Menyimpan nilai ID transaksi yang dikembalikan
+            $id_transaksi = $this->m_admin->buat_order($order);
+
+            // $this->m_admin->buat_order($order);
+            // $id_transaksi = $this->db->insert_id();
+
+
+            foreach ($this->cart->contents() as $item) {
+
+                $res = $this->m_admin->get_barang_qty($item['id']);
+                $last_qty = $res->qty;
+
+                $order_detail = [
+                    'id_transaksi' => $id_transaksi,
+                    'id_barang' => $item['primary'],
+                    'jumlah_jual' => $item['qty'],
+                    'hrg_jual' => $item['price'],
+                    'last_qty' => $last_qty,
                 ];
 
+                $this->m_admin->buat_order_detail($order_detail);
 
-                $this->m_admin->buat_order($order);
-                $this->m_admin->update_barang_qty($cart['id'], $last_qty);
+                // $this->m_admin->update_barang_qty($item['id'], $last_qty);
             }
+
             $this->cart->destroy();
 
             $response = [
-                'status'  => 200,
+                'status' => 200,
                 'message' => 'success',
             ];
         } else {
             $response = [
-                'status'  => 500,
+                'status' => 500,
                 'message' => 'internal server error',
             ];
         }
         echo json_encode($response);
     }
+
 
     public function generate_kode_transaksi()
     {
@@ -635,11 +712,11 @@ class Admin extends CI_Controller
             $sheet->setCellValue('A' . $row, $laporan['waktu']);
             $sheet->setCellValue('B' . $row, $laporan['barcode']);
             $sheet->setCellValue('C' . $row, $laporan['nm_barang']);
-            $sheet->setCellValue('D' . $row, $laporan['total_brg']);
-            $sheet->setCellValue('E' . $row, $laporan['harga']);
+            $sheet->setCellValue('D' . $row, $laporan['jumlah_jual']);
+            $sheet->setCellValue('E' . $row, $laporan['hrg_jual']);
 
             // Menambahkan nilai total_harga ke total
-            $total = $laporan['harga'] * $laporan['total_brg'];
+            $total = $laporan['hrg_jual'] * $laporan['jumlah_jual'];
 
             $sheet->setCellValue('F' . $row, $total);
             $sheet->setCellValue('G' . $row, $laporan['last_qty']);
@@ -732,8 +809,8 @@ class Admin extends CI_Controller
 
     public function laporanKeuangan()
     {
-        $data['title'] = 'Admin | Laporan Keuangan';
-        $data['page'] = 'laporanKeuangan';
+        $data['title'] = 'Admin | Laporan Pendapatan';
+        $data['page'] = 'laporanPendapatan';
 
         // Mengambil rentang tanggal dari input form
         $startdate = $this->input->get('startdate', TRUE);
@@ -917,8 +994,8 @@ class Admin extends CI_Controller
     {
         $data['title']    = 'Admin | Riwayat Transaksi';
         $data['page'] = 'transaksiDetail';
-        $data['detail'] = $this->m_admin->dt_transaksi_detil($id);
-
+        $data['detail'] = $this->m_admin->dt_transaksi_detail($id);
+        // $data['dt'] = $this->m_admin->dt_transaksi_detail1($id);
         $this->tampil($data);
     }
 
@@ -937,6 +1014,7 @@ class Admin extends CI_Controller
         $data['title']    = 'Admin | Barang';
         $data['page']    = 'barang';
         $data['barang'] = $this->m_admin->dtBarang();
+
         $this->tampil($data);
     }
 
@@ -946,6 +1024,8 @@ class Admin extends CI_Controller
         $data['page']    = 'barangTambah';
         $data['ddkategori'] = $this->m_admin->dropdown_kategori();
         $data['ddsatuan'] = $this->m_admin->dropdown_satuan();
+        $data['ddsupplier'] = $this->m_admin->dropdown_supplier();
+        $this->form_validation->set_rules('id_supplier', 'Pilih Supplier', 'callback_dd_cek');
         $this->form_validation->set_rules('barcode', 'Barcode', 'callback_barcode_exists');
         $this->form_validation->set_rules('nm_barang', 'Nama Barang', 'required', array('required' => '%s harus diisi.'));
         $this->form_validation->set_rules('hrg_jual', 'Harga Jual', 'required', array('required' => '%s harus diisi.'));
@@ -976,7 +1056,8 @@ class Admin extends CI_Controller
         $data['b'] = $this->m_umum->cari_data('tb_barang', 'id_barang', $id);
         $data['ddkategori'] = $this->m_admin->dropdown_kategori();
         $data['ddsatuan'] = $this->m_admin->dropdown_satuan();
-
+        $data['ddsupplier'] = $this->m_admin->dropdown_supplier();
+        $this->form_validation->set_rules('id_supplier', 'Pilih Supplier', 'callback_dd_cek');
         $this->form_validation->set_rules('nm_barang', 'Nama Barang', 'required', array('required' => '%s harus diisi.'));
         $this->form_validation->set_rules('hrg_jual', 'Harga Jual', 'required', array('required' => '%s harus diisi.'));
         $this->form_validation->set_rules('hrg_beli', 'Harga Beli', 'required', array('required' => '%s harus diisi.'));
@@ -988,12 +1069,12 @@ class Admin extends CI_Controller
         $barcodelama = $this->m_admin->cari_barcode($this->input->post('barcode'));
 
         // Jika barcode Lama ada dan ID sebelumnya tidak sama dengan ID Barang saat ini
-        // Jalankan validasi 'barcode' dengan menggunakan metode validasi kustom 'barcode_cek'
+        // Jalankan validasi 'barcode' dengan menggunakan metode validasi kustom 'callback_barcode_exists'
         if ($barcodelama && $barcodelama['id_barang'] != $id) {
             $this->form_validation->set_rules('barcode', 'Barcode', 'callback_barcode_exists');
         }
 
-        if ($this->form_validation->run() === FALSE) {
+        if ($this->form_validation->run() === FALSE || $barcodelama && $barcodelama['id_barang'] != $id) {
             $this->tampil($data);
         } else {
             $this->m_admin->dtBarangEdit($id);
@@ -1010,10 +1091,63 @@ class Admin extends CI_Controller
 
     public function kategoriBarang()
     {
-        $data['title']    = 'Admin | Barang';
+        $data['title']    = 'Admin | Kategori Barang';
         $data['page']    = 'kategoriBarang';
         $data['katbarang'] = $this->m_admin->dtKategoriBarang();
         $this->tampil($data);
+    }
+
+    public function kategoriTambah()
+    {
+        $data['title']    = 'Admin | Kategori Barang';
+        $data['page']    = 'kategoriTambah';
+        $this->form_validation->set_rules('nm_kategori', 'Kategori Barang', 'required', array('required' => '%s harus diisi.'));
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->tampil($data);
+        } else {
+            $this->m_admin->dtKategoriTambah();
+            $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            Data Berhasil Ditambahkan
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>');
+            redirect(base_url('admin/kategoriBarang'));
+        }
+    }
+
+    public function kategoriEdit($id = FALSE)
+    {
+        $data['title']    = 'Admin | Kategori Barang';
+        $data['page']    = 'kategoriEdit';
+        $data['k'] = $this->m_umum->cari_data('tb_kategori', 'id_kategori', $id);
+        $this->form_validation->set_rules('nm_kategori', 'Kategori Barang', 'required', array('required' => '%s harus diisi.'));
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->tampil($data);
+        } else {
+            $this->m_admin->dtKategoriEdit($id);
+            $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            Data Berhasil Diedit
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>');
+            redirect(base_url('admin/kategoriBarang'));
+        }
+    }
+
+    public function kategoriHapus($id)
+    {
+        $this->m_umum->hapus_data('tb_kategori', 'id_kategori', $id);
+        $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+        Data Berhasil Terhapus
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+        </div>');
+        redirect(base_url('admin/kategoriBarang'));
     }
 
     public function satuanBarang()
@@ -1022,6 +1156,59 @@ class Admin extends CI_Controller
         $data['page']    = 'satuanBarang';
         $data['satbarang'] = $this->m_admin->dtSatuanBarang();
         $this->tampil($data);
+    }
+
+    public function satuanTambah()
+    {
+        $data['title']    = 'Admin | Kategori Barang';
+        $data['page']    = 'satuanTambah';
+        $this->form_validation->set_rules('nm_satuan', 'Satuan Barang', 'required', array('required' => '%s harus diisi.'));
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->tampil($data);
+        } else {
+            $this->m_admin->dtSatuanTambah();
+            $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            Data Berhasil Ditambahkan
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>');
+            redirect(base_url('admin/satuanBarang'));
+        }
+    }
+
+    public function satuanEdit($id = FALSE)
+    {
+        $data['title']    = 'Admin | Kategori Barang';
+        $data['page']    = 'satuanEdit';
+        $data['s'] = $this->m_umum->cari_data('tb_satuan', 'id_satuan', $id);
+        $this->form_validation->set_rules('nm_satuan', 'Satuan Barang', 'required', array('required' => '%s harus diisi.'));
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->tampil($data);
+        } else {
+            $this->m_admin->dtSatuanEdit($id);
+            $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            Data Berhasil Diedit
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>');
+            redirect(base_url('admin/satuanBarang'));
+        }
+    }
+
+    public function satuanHapus($id)
+    {
+        $this->m_umum->hapus_data('tb_satuan', 'id_satuan', $id);
+        $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+        Data Berhasil Terhapus
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+        </div>');
+        redirect(base_url('admin/satuanBarang'));
     }
 
 
@@ -1129,11 +1316,14 @@ class Admin extends CI_Controller
 
     public function beritaTambah()
     {
+        date_default_timezone_set('Asia/Makassar'); // Set zona waktu ke WITA (Asia/Makassar)
+
+
         $data = array();
         $data['title'] = 'Admin | Berita';
         $data['page'] = 'beritaTambah';
         $config['upload_path'] = './uploads/gambarBerita/';
-        $config['allowed_types'] = 'gif|jpg|png';
+        $config['allowed_types'] = 'gif|jpg|png|jpeg';
         // $config['file_name'] = 'Berita_' . 'Tanggal_' . date('d m y') . '_';
 
         $this->load->library('upload', $config);
@@ -1154,7 +1344,7 @@ class Admin extends CI_Controller
             $id = $this->db->insert_id();
 
             // Membentuk nama file berdasarkan id_berita
-            $file_name = 'berita_' . $id;
+            $file_name = 'berita_' . $id . time();
 
             // Perbarui nama file
             $uploadgambar = $this->upload->data('full_path');
@@ -1188,6 +1378,8 @@ class Admin extends CI_Controller
 
     public function beritaEdit($id = FALSE)
     {
+        date_default_timezone_set('Asia/Makassar'); // Set zona waktu ke WITA (Asia/Makassar)
+
         $data['title'] = 'Admin | Edit Berita';
         $data['page'] = 'beritaEdit';
 
@@ -1200,59 +1392,64 @@ class Admin extends CI_Controller
         $data['b'] = $this->m_umum->cari_data('tb_berita', 'id_berita', $id);
 
         if ($this->form_validation->run() == FALSE) {
-            // Jika validasi gagal, tampilkan halaman edit berita   
+            // Jika validasi gagal, tampilkan halaman edit berita
             $this->tampil($data);
-        } else {
-            // Menyimpan nama gambar_berita yang lama
-            $gambar_berita_lama = $data['b']['gambar_berita'];
+            return;
+        }
 
-            if ($_FILES['gambar_berita']['name']) {
-                $config['upload_path'] = './uploads/gambarBerita/';
-                $config['allowed_types'] = 'gif|jpg|png';
+        // Menyimpan nama gambar_berita yang lama
+        $gambar_berita_lama = $data['b']['gambar_berita'];
 
-                $this->load->library('upload', $config);
+        if ($_FILES['gambar_berita']['name']) {
+            $config['upload_path'] = './uploads/gambarBerita/';
+            $config['allowed_types'] = 'gif|jpg|png|jpeg';
 
-                if (!$this->upload->do_upload('gambar_berita')) {
-                    $error = $this->upload->display_errors();
-                    $this->session->set_flashdata('error', $error);
-                    $this->tampil($data);
-                } else {
-                    // Dapatkan nama file baru berdasarkan id_berita
-                    $file_name = 'berita_' . $id;
+            $this->load->library('upload', $config);
 
-                    // Perbarui nama file
-                    $uploadgambar = $this->upload->data();
-                    $nm_gambar_baru = $file_name . '.' . pathinfo($uploadgambar['file_name'], PATHINFO_EXTENSION);
-                    $nm_ekstensi_gambar = $config['upload_path'] . $nm_gambar_baru;
-
-                    // Hapus gambar_berita lama jika ada
-                    if ($gambar_berita_lama && file_exists('./uploads/gambarBerita/' . $gambar_berita_lama)) {
-                        unlink('./uploads/gambarBerita/' . $gambar_berita_lama);
-                    }
-
-                    // Pindahkan file gambar baru ke lokasi yang ditentukan
-                    rename($uploadgambar['full_path'], $nm_ekstensi_gambar);
-
-                    // Panggil fungsi untuk menyimpan data berita dengan gambar baru
-                    $this->m_admin->dtBeritaEdit($id, $nm_gambar_baru);
-                }
-            } else {
-                // Jika tidak ada gambar baru diunggah, panggil fungsi untuk menyimpan data berita tanpa perubahan gambar
-                $this->m_admin->dtBeritaEdit($id, $gambar_berita_lama);
+            if (!$this->upload->do_upload('gambar_berita')) {
+                $error = $this->upload->display_errors();
+                $this->session->set_flashdata('error', $error);
+                $this->tampil($data);
+                return;
             }
 
-            // Set pesan sukses
-            $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
-             Berita berhasil diperbarui
-             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                 <span aria-hidden="true">&times;</span>
-             </button>
-         </div>');
+            // Buat nama file gambar baru dengan format datetime
+            $file_name = 'berita_' . $id . '_' . date('His');
 
-            // Redirect ke halaman daftar berita
-            redirect(base_url('admin/berita'));
+
+            // Perbarui nama file
+            $uploadgambar = $this->upload->data();
+            $nm_gambar_baru = $file_name . '.' . pathinfo($uploadgambar['file_name'], PATHINFO_EXTENSION);
+            $nm_ekstensi_gambar = $config['upload_path'] . $nm_gambar_baru;
+
+            // Hapus gambar_berita lama jika ada
+            if ($gambar_berita_lama && file_exists('./uploads/gambarBerita/' . $gambar_berita_lama)) {
+                unlink('./uploads/gambarBerita/' . $gambar_berita_lama);
+            }
+
+            // Pindahkan file gambar baru ke lokasi yang ditentukan
+            rename($uploadgambar['full_path'], $nm_ekstensi_gambar);
+
+            // Panggil fungsi untuk menyimpan data berita dengan gambar baru
+            $this->m_admin->dtBeritaEdit($id, $nm_gambar_baru);
+        } else {
+            // Jika tidak ada gambar baru diunggah, panggil fungsi untuk menyimpan data berita tanpa perubahan gambar
+            $this->m_admin->dtBeritaEdit($id, $gambar_berita_lama);
         }
+
+        // Set pesan sukses
+        $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+        Berita berhasil diperbarui
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>');
+
+        // Redirect ke halaman daftar berita
+        redirect(base_url('admin/berita'));
     }
+
+
 
 
     public function beritaHapus($id)
@@ -1295,7 +1492,20 @@ class Admin extends CI_Controller
         $data['title']    = 'Admin | User';
         $data['page']    = 'userEdit';
         $data['u'] = $this->m_umum->cari_data('tb_user', 'username', $id);
-        $this->tampil($data);
+        $this->form_validation->set_rules('username', 'Username', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email', array('required' => '%s harus diisi.'));
+        if ($this->form_validation->run() === FALSE) {
+            $this->tampil($data);
+        } else {
+            $this->m_admin->dtUserEdit($id);
+            $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            Data Berhasil Diedit
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>');
+            redirect(base_url('admin/user'));
+        }
     }
 
 
@@ -1307,6 +1517,34 @@ class Admin extends CI_Controller
         $data['page']    = 'profilToko';
         $data['toko'] = $this->m_admin->dtProfilToko();
         $this->tampil($data);
+    }
+
+
+    public function profilTokoEdit($id = FALSE)
+    {
+        $data['title']    = 'Admin | Config Email';
+        $data['page']    = 'profilTokoEdit';
+        $data['toko'] = $this->m_admin->dtProfilToko();
+        $data['t'] = $this->m_umum->cari_data('tb_toko', 'id_toko', $id);
+        $this->form_validation->set_rules('nm_toko', 'Nama Toko', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('no_telp', 'Nomor Telepon', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('alamat', 'Alamat', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('instagram', 'Instagram', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('facebook', 'Facebook', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('longitude', 'X', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('latitude', 'Y', 'required', array('required' => '%s harus diisi.'));
+        if ($this->form_validation->run() === FALSE) {
+            $this->tampil($data);
+        } else {
+            $this->m_admin->dtProfilTokoEdit($id);
+            $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            Data Berhasil Diedit
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>');
+            redirect(base_url('admin/profilToko'));
+        }
     }
 
     //============== CONFIG EMAIL ============//
@@ -1349,6 +1587,70 @@ class Admin extends CI_Controller
         $data['supplier'] = $this->m_admin->dtSupplier();
         $this->tampil($data);
     }
+
+    public function supplierTambah()
+    {
+        $data['title']    = 'Admin | Tambah Supplier';
+        $data['page']    = 'supplierTambah';
+        $this->form_validation->set_rules('nm_supplier', 'Nama Supplier', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('no_telp', 'Nomor Telepon', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('alamat', 'Alamat', 'required', array('required' => '%s harus diisi.'));
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->tampil($data);
+        } else {
+            $this->m_admin->dtSupplierTambah();
+            $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            Data Berhasil Ditambahkan
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>');
+            redirect(base_url('admin/supplier'));
+        }
+    }
+
+    public function supplierEdit($id = FALSE)
+    {
+        $data['title']    = 'Admin | Tambah Supplier';
+        $data['page']    = 'supplierEdit';
+        $data['s'] = $this->m_umum->cari_data('tb_supplier', 'id_supplier', $id);
+        $this->form_validation->set_rules('nm_supplier', 'Nama Supplier', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('no_telp', 'Nomor Telepon', 'required', array('required' => '%s harus diisi.'));
+        $this->form_validation->set_rules('alamat', 'Alamat', 'required', array('required' => '%s harus diisi.'));
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->tampil($data);
+        } else {
+            $this->m_admin->dtSupplierEdit($id);
+            $this->session->set_flashdata('pesan', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            Data Berhasil Diedit
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+            </div>');
+            redirect(base_url('admin/supplier'));
+        }
+    }
+
+    public function suplyBarang()
+    {
+        $data['title']    = 'Admin | Supplier';
+        $data['page']    = 'suplyBarang';
+        $data['barang_supplier'] = $this->m_admin->dtBarangSupplier();
+        $this->tampil($data);
+    }
+
+    public function suplyBarangTambah()
+    {
+        $data['title'] = 'Admin | Tambah Suplai Barang';
+        $data['page'] = 'suplyBarangTambah';
+        $data['supplier'] = $this->m_admin->dtSupplier();
+        $data['barang'] = $this->m_admin->dtBarang();
+        $this->tampil($data);
+    }
+
+
 
     // public function addPelanggan()
     // {
@@ -1435,10 +1737,12 @@ class Admin extends CI_Controller
     {
         $data['nama_user'] = $this->db->get_where('tb_user', ['username' =>
         $this->session->userdata('username')])->row_array();
+        $data['data_user'] = $this->db->get_where('tb_user', ['id_level' =>
+        $this->session->userdata('id_level')])->row_array();
         $this->load->view('admin/header', $data);
-        $this->load->view('admin/sidebar');
-        $this->load->view('admin/topbar');
-        $this->load->view('admin/isi');
-        $this->load->view('admin/footer');
+        $this->load->view('admin/sidebar', $data);
+        $this->load->view('admin/topbar', $data);
+        $this->load->view('admin/isi', $data);
+        $this->load->view('admin/footer', $data);
     }
 }

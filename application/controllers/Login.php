@@ -22,9 +22,9 @@ class Login extends CI_Controller
                 if ($data_user['id_level'] == 1)
                     redirect(base_url("admin"));
                 else if ($data_user['id_level'] == 2)
-                    redirect(base_url("berita"));
+                    redirect(base_url("admin"));
                 else if ($data_user['id_level'] == 3)
-                    redirect(base_url("kasir"));
+                    redirect(base_url("admin"));
                 else
                     show_404();
             } else {

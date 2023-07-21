@@ -22,8 +22,36 @@
 <script src="<?php echo base_url('assets/'); ?>js/tabs.js"></script>
 <script src="<?php echo base_url('assets/'); ?>js/swiper.js"></script>
 <script src="<?php echo base_url('assets/'); ?>js/custom.js"></script>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Script untuk menampilkan peta -->
+<script>
+    const latitude = <?php echo $kordinat->latitude; ?>;
+    const longitude = <?php echo $kordinat->longitude; ?>;
+
+    // Membuat peta
+    const map = L.map('map', {
+        dragging: false,
+        scrollWheelZoom: false,
+        touchZoom: false, // Menonaktifkan zoom dengan menyentuh pada layar sentuh
+        doubleClickZoom: false // Menonaktifkan zoom dengan double click pada layar sentuh
+    }).setView([latitude, longitude], 17);
+
+    // Menampilkan peta dari OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        maxZoom: 18,
+    }).addTo(map);
+
+    // Menambahkan penanda (marker) pada lokasi
+    L.marker([latitude, longitude]).addTo(map);
+</script>
+
 <!-- 
 <script>
+    document.cookie = "cookieName=cookieValue; SameSite=Lax";
+
     // Fungsi untuk menangani event scroll mouse
     function smoothScroll(event) {
         event.preventDefault();

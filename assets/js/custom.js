@@ -3,9 +3,48 @@
   
 	$(document).ready(function () {
   
+	  $('.owl-banner').owlCarousel({
+		center: true,
+		items: 1,
+		loop: true,
+		nav: true,
+		navText: ['<i class="fa fa-angle-left" aria-hidden="true"></i>', '<i class="fa fa-angle-right" aria-hidden="true"></i>'],
+		margin: 30,
+		autoplay: true,
+		autoplayTimeout: 5000,
+		responsive: {
+		  992: {
+			items: 1
+		  },
+		  1200: {
+			items: 1
+		  }
+		}
+	  });
+  
+	  $('.owl-testimonials').owlCarousel({
+		items: 1,
+		loop: true,
+		dots: true,
+		nav: false,
+		autoplay: true,
+		margin: 15,
+		responsive: {
+		  0: {
+			items: 1
+		  },
+		  600: {
+			items: 1
+		  },
+		  1000: {
+			items: 1
+		  }
+		}
+	  });
+  
 	  // PRE LOADER
 	  $(window).on('load', function () {
-		$('.preloader').fadeOut(1000); // set duration in milliseconds    
+		$('.preloader').fadeOut(1000);
 	  });
   
 	  $(window).scroll(function () {
@@ -40,9 +79,7 @@
   
 	  const Accordion = {
 		settings: {
-		  // Expand the first item by default
 		  first_expanded: false,
-		  // Allow items to be toggled independently
 		  toggle: false
 		},
   
@@ -62,13 +99,11 @@
 		init: function (el) {
 		  const _this = this;
   
-		  // Override default settings with classes
 		  let is_first_expanded = _this.settings.first_expanded;
 		  if (el.classList.contains("is-first-expanded")) is_first_expanded = true;
 		  let is_toggle = _this.settings.toggle;
 		  if (el.classList.contains("is-toggle")) is_toggle = true;
   
-		  // Loop through the accordion's sections and set up the click behavior
 		  const sections = el.getElementsByClassName("accordion");
 		  const all_toggles = el.getElementsByClassName("accordion-head");
 		  const all_contents = el.getElementsByClassName("accordion-body");
@@ -77,18 +112,14 @@
 			const toggle = all_toggles[i];
 			const content = all_contents[i];
   
-			// Click behavior
 			toggle.addEventListener("click", function (e) {
 			  if (!is_toggle) {
-				// Hide all content areas first
 				for (let a = 0; a < all_contents.length; a++) {
 				  _this.closeAccordion(all_toggles[a], all_contents[a]);
 				}
   
-				// Expand the clicked item
 				_this.openAccordion(toggle, content);
 			  } else {
-				// Toggle the clicked item
 				if (toggle.classList.contains("is-open")) {
 				  _this.closeAccordion(toggle, content);
 				} else {
@@ -97,7 +128,6 @@
 			  }
 			});
   
-			// Expand the first item
 			if (i === 0 && is_first_expanded) {
 			  _this.openAccordion(toggle, content);
 			}
@@ -106,7 +136,6 @@
 	  };
   
 	  (function () {
-		// Initiate all instances on the page
 		const accordions = document.getElementsByClassName("accordions");
 		for (let i = 0; i < accordions.length; i++) {
 		  Accordion.init(accordions[i]);
@@ -130,26 +159,6 @@
 		}
 	  });
   
-	  $('.owl-testimonials').owlCarousel({
-		items: 1,
-		loop: true,
-		dots: true,
-		nav: false,
-		autoplay: true,
-		margin: 15,
-		responsive: {
-		  0: {
-			items: 1
-		  },
-		  600: {
-			items: 1
-		  },
-		  1000: {
-			items: 1
-		  }
-		}
-	  });
-  
 	  // Menu Dropdown Toggle
 	  if ($('.menu-trigger').length) {
 		$(".menu-trigger").on('click', function () {
@@ -165,7 +174,7 @@
 		  target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
 		  if (target.length) {
 			var width = $(window).width();
-			if (width < 991) {
+			if (width < 767) {
 			  $('.menu-trigger').removeClass('active');
 			  $('.header-area .nav').slideUp(200);
 			}
@@ -176,6 +185,7 @@
 		  }
 		}
 	  });
+  
   
 	  $(document).on("scroll", onScroll);
   
@@ -189,13 +199,13 @@
 		});
 		$(this).addClass('active');
   
-		var target = this.hash,
+		
 		  menu = target;
 		var target = $(this.hash);
 		$('html, body').stop().animate({
 		  scrollTop: (target.offset().top) - 79
 		}, 500, 'swing', function () {
-		  window.location.hash = target;
+		  window.location.hash = hash;
 		  $(document).on("scroll", onScroll);
 		});
 	  });
@@ -203,23 +213,23 @@
 	  function onScroll(event) {
 		var scrollPos = $(document).scrollTop();
 		var navLinks = $('.nav a');
-	
+  
 		navLinks.each(function () {
-			var currLink = $(this);
-			var refElement = $(currLink.attr("href"));
-	
-			if (refElement.length && refElement.position()) {
-				var refElementTop = refElement.position().top;
-				var refElementBottom = refElementTop + refElement.outerHeight();
-	
-				if (scrollPos >= refElementTop && scrollPos < refElementBottom) {
-					navLinks.removeClass("active");
-					currLink.addClass("active");
-				}
+		  var currLink = $(this);
+		  var refElement = $(currLink.attr("href"));
+  
+		  if (refElement.length && refElement.position()) {
+			var refElementTop = refElement.position().top;
+			var refElementBottom = refElementTop + refElement.outerHeight();
+  
+			if (scrollPos >= refElementTop && scrollPos < refElementBottom) {
+			  navLinks.removeClass("active");
+			  currLink.addClass("active");
 			}
+		  }
 		});
-	}
-	
+	  }
+  
 	  // Page loading animation
 	  $(window).on('load', function () {
 		if ($('.cover').length) {
@@ -237,12 +247,6 @@
 		  }, 300);
 		});
 	  });
-  
-	//   // CounterUp
-	//   $('.counter').counterUp({
-	// 	delay: 10,
-	// 	time: 1000
-	//   });
   
 	  // WOW
 	  $(document).on('scroll', function () {
@@ -277,22 +281,6 @@
 		$('#search-input-box').slideUp(500);
 	  });
   
-	//   // Page Scroll to id 
-	//   $("#navigation-menu a").mPageScroll2id({
-	// 	offset: 79
-	//   });
-  
-	//   // Mixitup
-	//   $(function () {
-	// 	$("#portfolio").mixItUp();
-	//   });
-  
-	  // Video Lightbox
-	  $(document).on('click', '.lightbox', function (event) {
-		event.preventDefault();
-		$(this).ekkoLightbox();
-	  });
-  
 	  // Back to Top
 	  $(window).scroll(function () {
 		if ($(this).scrollTop() >= 500) {
@@ -307,12 +295,6 @@
 		}, 800);
 	  });
   
-	  // jQuery sticky Menu
-  
-	//   $(".mainmenu-area").sticky({
-	// 	topSpacing: 0
-	//   });
-  
 	  // Tooltip
 	  $(document).ready(function () {
 		$('[data-toggle="tooltip"]').tooltip();
@@ -324,16 +306,12 @@
 		  $(".navbar-collapse").collapse('hide');
 	  });
   
-	//   // WOW
-	//   $(document).ready(function () {
-	// 	new WOW().init();
-	//   });
-  
 	  // Preloader
 	  jQuery(window).on('load', function () {
 		$('.preloader').fadeOut(700);
 	  });
 	});
-  
+
+	
   }(jQuery));
   

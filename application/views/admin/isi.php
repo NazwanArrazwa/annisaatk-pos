@@ -10,21 +10,35 @@ if ($page == 'home') {
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
             <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
         </div>
+
         <!-- Content Row -->
         <div class="row">
-
-            <!-- Earnings (Monthly) Card Example -->
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Jumlah Barang</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $jml_barang; ?></div>
+                                    <?php if ($this->session->userdata('id_level') == 1 || $this->session->userdata('id_level') == 3) : ?>
+                                        Jumlah Barang
+                                    <?php elseif ($this->session->userdata('id_level') == 2) : ?>
+                                        Jumlah Berita
+                                    <?php endif; ?>
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="counter">
+                                    <?php if ($this->session->userdata('id_level') == 1 || $this->session->userdata('id_level') == 3) : ?>
+                                        <?php echo $jml_barang; ?>
+                                    <?php elseif ($this->session->userdata('id_level') == 2) : ?>
+                                        <?php echo $jml_berita; ?>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                             <div class="col-auto">
-                                <i class="fas fa-box fa-2x text-gray-300"></i>
+                                <?php if ($this->session->userdata('id_level') == 1 || $this->session->userdata('id_level') == 3) : ?>
+                                    <i class="fas fa-box fa-2x text-gray-300"></i>
+                                <?php elseif ($this->session->userdata('id_level') == 2) : ?>
+                                    <i class="fas fa-newspaper fa-2x text-gray-300"></i>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -32,88 +46,99 @@ if ($page == 'home') {
             </div>
 
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    Jumlah Pelanggan</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $jml_pelanggan; ?></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-id-card fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Keuntungann Harian
-                                </div>
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col-auto">
-                                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">Rp. <?= number_format($pendapatan_harian == NULL ? 0 : $pendapatan_harian) ?></div>
+            <?php if ($this->session->userdata('id_level') == 1) : ?>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Jumlah Pelanggan
                                     </div>
-                                    <div class="col">
-
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <?php echo $jml_pelanggan; ?>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                <div class="col-auto">
+                                    <i class="fas fa-id-card fa-2x text-gray-300"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
 
-            <!-- Pending Requests Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Jumlah Supplier</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $jml_supplier; ?></div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fa-solid fa-truck-field fa-2x text-gray-300"></i>
+            <?php if ($this->session->userdata('id_level') == 1 || $this->session->userdata('id_level') == 3) : ?>
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Keuntungan Harian
+                                    </div>
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-auto">
+                                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                                                Rp. <?= number_format($pendapatan_harian == NULL ? 0 : $pendapatan_harian) ?>
+                                            </div>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
+
+            <?php if ($this->session->userdata('id_level') == 1) : ?>
+                <!-- Pending Requests Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Jumlah Supplier
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <?php echo $jml_supplier; ?>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa-solid fa-truck-field fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
 
         <!-- Content Row -->
-        <div class="row">
-            <div class="col">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Pendapatan Bulanan</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-area">
-                            <canvas id="myAreaChart"></canvas>
+        <?php if ($this->session->userdata('id_level') == 1 || $this->session->userdata('id_level') == 3) : ?>
+            <div class="row">
+                <div class="col">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Pendapatan Bulanan</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="myAreaChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
+        <?php endif; ?>
     </div>
-
     <!-- /.container-fluid -->
-
     </div>
     <!-- End of Main Content -->
 
@@ -195,20 +220,18 @@ else if ($page == 'kasir') {
                     display: none;
                 }
 
-                .sidebar {
-                    display: none;
+                @page {
+                    margin: 0;
                 }
 
+                .sidebar,
+                .footer,
                 .modal-footer,
-                .modal-header {
-                    display: none;
-                }
-
+                .modal-header,
                 title {
                     display: none;
                 }
             }
-
 
             .tampil-bayar {
                 font-size: 5em;
@@ -226,13 +249,13 @@ else if ($page == 'kasir') {
                 display: none;
             }
 
-            @media(max-width: 768px) {
+            /* @media(max-width: 768px) {
                 .tampil-bayar {
                     font-size: 3em;
                     height: 70px;
                     padding-top: 5px;
                 }
-            }
+            } */
         </style>
 
 
@@ -344,7 +367,7 @@ else if ($page == 'kasir') {
                                 <div class="form-group row">
                                     <label class="col-lg-2 control-label">Kasir</label>
                                     <div class="col-lg-8">
-                                        <input type="text" name="username" class="form-control" value="<?= $nama_user['username']; ?>" readonly>
+                                        <input type="text" name="username" id="kasir" class="form-control" value="<?= $nama_user['username']; ?>" readonly>
                                     </div>
                                 </div>
 
@@ -363,7 +386,7 @@ else if ($page == 'kasir') {
 
     <!-- Modal Barang -->
     <div class="modal fade" id="barangModal" tabindex="-1" aria-labelledby="barangModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="barangModalLabel">Data Barang</h5>
@@ -398,7 +421,7 @@ else if ($page == 'kasir') {
                                         <td><?php echo $b['qty'] ?></td>
                                         <td><input type="text" name="quantity" class="form-control quantity" id="<?php echo $b['barcode']; ?>"></td>
                                         <td>
-                                            <button type="button" name="add_cart" class="btn btn-success btn-sm add_cart" data-productname="<?php echo $b['nm_barang']; ?>" data-price="<?php echo $b['hrg_jual']; ?>" data-productid="<?php echo $b['barcode']; ?>"><i class="fa fa-cart-plus"></i> Tambah</button>
+                                            <button type="button" name="add_cart" class="btn btn-success btn-sm add_cart" data-productname="<?php echo $b['nm_barang']; ?>" data-price="<?php echo $b['hrg_jual']; ?>" data-productid="<?php echo $b['barcode']; ?>" data-productprimary="<?php echo $b['id_barang']; ?>"><i class="fa fa-cart-plus"></i> Tambah</button>
 
                                         </td>
                                     </tr>
@@ -415,6 +438,7 @@ else if ($page == 'kasir') {
 
         </div>
     </div>
+
 
 
     <!-- /.container-fluid -->
@@ -465,9 +489,10 @@ else if ($page == 'kasir') {
 
         </div>
     </div>
+
     <!-- Modal -->
     <div class="modal fade" id="modal_struck" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-md">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -482,6 +507,15 @@ else if ($page == 'kasir') {
     </div>
     <!-- End of Main Content -->
 
+    <script src=" <?php echo base_url('assets/'); ?>vendor/jquery/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("body").toggleClass("sidebar-toggled");
+            $(".sidebar").toggleClass("toggled");
+
+        });
+    </script>
+
 <?php
 }
 
@@ -494,7 +528,7 @@ else if ($page == 'penjualanBarang') {
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Laporan Keuangan</h1>
+            <h1 class="h3 mb-0 text-gray-800">Penjualan Barang</h1>
 
             <div class="dropdown">
                 <!-- Button trigger modal -->
@@ -569,10 +603,11 @@ For more information about DataTables, please visit the <a target="_blank" href=
                                     <td class="text-center"><?php echo $lp['waktu'] ?></td>
                                     <td class="text-center"><?php echo $lp['barcode'] ?></td>
                                     <td class="text-center"><?php echo $lp['nm_barang']; ?></td>
-                                    <td class="text-center"><?php echo $lp['total_brg']; ?></td>
-                                    <td class="text-center"><?php echo 'Rp. ' . number_format($lp['harga'], 0, ',', '.'); ?></td>
-                                    <td class="text-center"><?php echo 'Rp. ' . number_format($lp['harga'] * $lp['total_brg'], 0, ',', '.'); ?></td>
-                                    <td class="text-center"><?php echo $lp['last_qty']; ?></td>
+                                    <td class="text-center"><?php echo $lp['jumlah_jual']; ?></td>
+                                    <td class="text-center"><?php echo 'Rp. ' . number_format($lp['hrg_jual'], 0, ',', '.'); ?></td>
+                                    <td class="text-center"><?php echo 'Rp. ' . number_format($lp['hrg_jual'] * $lp['jumlah_jual'], 0, ',', '.'); ?></td>
+                                    <td class="text-center"><?php echo $lp['last_qty'];
+                                                            ?></td>
 
                                 </tr>
                             <?php } ?>
@@ -599,8 +634,8 @@ For more information about DataTables, please visit the <a target="_blank" href=
 <?php
 }
 
-//==================================== laporan Keuangan ====================================
-else if ($page == 'laporanKeuangan') {
+//==================================== laporan Pendapatan ====================================
+else if ($page == 'laporanPendapatan') {
 ?>
 
 
@@ -609,7 +644,7 @@ else if ($page == 'laporanKeuangan') {
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Laporan Keuangan</h1>
+            <h1 class="h3 mb-0 text-gray-800">Laporan Pendapatan</h1>
 
             <div class="dropdown">
                 <!-- Button trigger modal -->
@@ -677,7 +712,7 @@ For more information about DataTables, please visit the <a target="_blank" href=
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Data Laporan Keuangan</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Data Laporan Pendapatan</h6>
             </div>
 
             <div class="card-body">
@@ -757,6 +792,7 @@ For more information about DataTables, please visit the <a target="_blank" href=
                                 <th>Customer</th>
                                 <th>Kasir</th>
                                 <th>Qty</th>
+                                <th>Bayar</th>
                                 <th>Total</th>
                                 <th>Aksi</th>
                             </tr>
@@ -774,7 +810,8 @@ For more information about DataTables, please visit the <a target="_blank" href=
                                     <td><?php echo $tr['nm_pelanggan'] ?></td>
                                     <td><?php echo $tr['username'] ?></td>
                                     <td><?php echo $tr['total_brg'] ?></td>
-                                    <td><?php echo 'Rp. ' . number_format($tr['harga'], 0, ',', '.'); ?></td>
+                                    <td><?php echo 'Rp. ' . number_format($tr['jumlah_bayar'], 0, ',', '.'); ?></td>
+                                    <td><?php echo 'Rp. ' . number_format($tr['total_hrg'], 0, ',', '.'); ?></td>
 
                                     <td>
                                         <a href=<?php echo base_url("admin/transaksiDetail/") . $tr['kode_transaksi']; ?>><span class="badge badge-success"><i class="fa-solid fa-eye"></i> Detail</span></a> |
@@ -808,56 +845,52 @@ else if ($page == 'transaksiDetail') {
 
         <!-- Page Heading -->
         <h1 class="h3 mb-2 text-gray-800">Detail Transaksi - <?php echo $detail[0]['kode_transaksi']; ?></h1>
-        <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p> -->
 
-        <table class="table table-bordered">
-            <thead>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Kode Transaksi</th>
-                    <td colspan="3"><?php echo $detail[0]['kode_transaksi']; ?></td>
-                </tr>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <tbody>
+                            <tr>
+                                <th>Kode Transaksi</th>
+                                <td><?php echo $detail[0]['kode_transaksi']; ?></td>
+                            </tr>
+                            <tr>
+                                <th>Nama Barang</th>
+                                <th>Harga Jual</th>
+                            </tr>
+                            <?php foreach ($detail as $d) : ?>
+                                <tr>
+                                    <td><?php echo $d['nm_barang']; ?></td>
+                                    <td><?php echo $d['hrg_jual']; ?></td>
+                                </tr>
+                            <?php endforeach; ?>
 
-                <tr>
-                    <th scope="row" colspan="1" rowspan="<?php echo count($detail); ?>">Nama Barang</th>
-                    <?php
-                    $total = 0; // Inisialisasi variabel total
-
-                    foreach ($detail as $d) {
-                    ?>
-                        <td><?php echo $d['nm_barang']; ?></td>
-                        <td><?php echo $d['total_brg']; ?></td>
-                        <td><?php echo 'Rp. ' . number_format($d['harga'] * $d['total_brg'], 0, ',', '.'); ?></td>
-                </tr>
-            <?php
-
-                        $total += $d['harga'] * $d['total_brg']; // Akumulasi total
-                    }
-            ?>
-            <tr>
-                <th scope="row">Total</th>
-                <td colspan="3"><?php echo 'Rp. ' . number_format($total, 0, ',', '.'); ?></td>
-            </tr>
-
-
-            <tr>
-                <th scope="row">Diskon</th>
-                <td colspan="3"><?php echo $detail[0]['diskon'], '%'; ?></td>
-            </tr>
-            <tr>
-                <th scope="row">Customer</th>
-                <td colspan="3"><?php echo $detail[0]['nm_pelanggan']; ?></td>
-            </tr>
-            <tr>
-                <th scope="row">Kasir</th>
-                <td colspan="3"><?php echo $detail[0]['username']; ?></td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="float-left">
-            <a href="<?php echo base_url("admin/riwayatTransaksi") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
+                            <tr>
+                                <th>Total Harga</th>
+                                <td colspan="3"><?php echo 'Rp. ' . number_format($detail[0]['total_hrg'], 0, ',', '.'); ?></td>
+                            </tr>
+                            <tr>
+                                <th>Diskon</th>
+                                <td colspan="3"><?php echo $detail[0]['diskon'] . '%'; ?></td>
+                            </tr>
+                            <tr>
+                                <th>Customer</th>
+                                <td colspan="3"><?php echo $detail[0]['nm_pelanggan'];
+                                                ?></td>
+                            </tr>
+                            <tr>
+                                <th>Kasir</th>
+                                <td colspan="3"><?php echo $detail[0]['username'];
+                                                ?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="<?php echo base_url("admin/riwayatTransaksi") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i> Kembali</a>
+            </div>
         </div>
 
     </div>
@@ -865,7 +898,6 @@ For more information about DataTables, please visit the <a target="_blank" href=
 
     </div>
     <!-- End of Main Content -->
-
 
 
 <?php
@@ -966,6 +998,12 @@ else if ($page == 'barangTambah') {
                         <div class="form-row">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="kategori" class="form-label">Pilih Kategori Barang</label>
+                                    <?php echo form_dropdown('id_supplier', $ddsupplier, set_value('id_supplier'), 'class="form-control"'); ?>
+                                    <span class="badge badge-warning"><?php echo strip_tags(form_error('id_supplier')); ?></span>
+
+                                </div>
+                                <div class="form-group">
                                     <label>Barcode</label>
                                     <input type="text" name="barcode" placeholder="Masukkan Barcode..." value="<?= set_value('barcode') ?>" class="form-control">
                                     <span class="badge badge-danger"><?php echo strip_tags(form_error('barcode')); ?></span>
@@ -1047,6 +1085,12 @@ else if ($page == 'barangEdit') {
                     <form method="POST" action="<?php echo base_url('admin/barangEdit/' . $b['id_barang']); ?>">
                         <div class="form-row">
                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="supplier" class="form-label">Pilih Supplier</label>
+                                    <?php echo form_dropdown('id_supplier', $ddsupplier, set_value('id_supplier', $b['id_supplier']), 'class="form-control"'); ?>
+                                    <span class="badge badge-warning"><?php echo strip_tags(form_error('id_supplier')); ?></span>
+
+                                </div>
                                 <div class="form-group">
                                     <label>Barcode</label>
                                     <input type="text" name="barcode" placeholder="Masukkan Barcode..." value="<?php echo set_value('barcode', $b['barcode']); ?>" class="form-control">
@@ -1174,7 +1218,97 @@ For more information about DataTables, please visit the <a target="_blank" href=
 <?php
 }
 
-//==================================== Satuan Tambah ====================================
+//==================================== Kategori Tambah ====================================
+else if ($page == 'kategoriTambah') {
+?>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-3">
+            <h1 class="h3 mb-0 text-gray-800">Tambah Kategori Barang</h1>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
+                <div class="card-body">
+                    <form method="POST" action="<?php echo base_url("admin/kategoriTambah"); ?>">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Kategori Barang</label>
+                                    <input type="text" name="nm_kategori" placeholder="Masukkan Kategori Barang..." value="<?= set_value('nm_kategori') ?>" class="form-control">
+                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_kategori')); ?></span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            <a href="<?php echo base_url("admin/kategoriBarang") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+<?php
+}
+
+//==================================== Kategori Tambah ====================================
+else if ($page == 'kategoriEdit') {
+?>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-3">
+            <h1 class="h3 mb-0 text-gray-800">Edit Kategori Barang</h1>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
+                <div class="card-body">
+                    <form method="POST" action="<?php echo base_url("admin/kategoriEdit/" . $k['id_kategori']) ?>">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Kategori Barang</label>
+                                    <input type="text" name="nm_kategori" placeholder="Masukkan Kategori Barang..." value="<?php echo set_value('nm_kategori', $k['nm_kategori']); ?>" class="form-control">
+                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_kategori')); ?></span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            <a href="<?php echo base_url("admin/kategoriBarang") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+<?php
+}
+
+//==================================== Satuan Barang ====================================
 else if ($page == 'satuanBarang') {
 ?>
     <!-- Begin Page Content -->
@@ -1227,6 +1361,97 @@ For more information about DataTables, please visit the <a target="_blank" href=
                 </div>
             </div>
         </div>
+
+    </div>
+    <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+<?php
+}
+
+//==================================== Satuan Tambah ====================================
+else if ($page == 'satuanTambah') {
+?>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-3">
+            <h1 class="h3 mb-0 text-gray-800">Tambah Satuan Barang</h1>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
+                <div class="card-body">
+                    <form method="POST" action="<?php echo base_url("admin/satuanTambah"); ?>">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Satuan Barang</label>
+                                    <input type="text" name="nm_satuan" placeholder="Masukkan Satuan Barang..." value="<?= set_value('nm_satuan') ?>" class="form-control">
+                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_satuan')); ?></span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            <a href="<?php echo base_url("admin/satuanBarang") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+
+<?php
+}
+
+//==================================== Kategori Tambah ====================================
+else if ($page == 'satuanEdit') {
+?>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-3">
+            <h1 class="h3 mb-0 text-gray-800">Edit Satuan Barang</h1>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
+                <div class="card-body">
+                    <form method="POST" action="<?php echo base_url("admin/satuanEdit/" . $s['id_satuan']) ?>">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Satuan Barang</label>
+                                    <input type="text" name="nm_satuan" placeholder="Masukkan Satuan Barang..." value="<?php echo set_value('nm_satuan', $s['nm_satuan']); ?>" class="form-control">
+                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_satuan')); ?></span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            <a href="<?php echo base_url("admin/satuanBarang") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
 
     </div>
     <!-- /.container-fluid -->
@@ -1390,7 +1615,7 @@ else if ($page == 'pelangganEdit') {
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Pelanggan</h1>
+            <h1 class="h3 mb-0 text-gray-800">Edit Pelanggan</h1>
         </div>
 
         <div class="col-md-6">
@@ -1582,7 +1807,7 @@ else if ($page == 'beritaEdit') {
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Berita</h1>
+            <h1 class="h3 mb-0 text-gray-800">Edit Berita</h1>
         </div>
         <?php echo $this->session->flashdata('error'); ?>
 
@@ -1648,12 +1873,14 @@ else if ($page == 'user') {
         <h1 class="h3 mb-2 text-gray-800">User</h1>
         <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
         For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p> -->
-
+        <?php echo $this->session->flashdata('pesan'); ?>
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">Data User</h6>
             </div>
+
+
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered" id="myTable" width="100%" cellspacing="0">
@@ -1706,9 +1933,9 @@ else if ($page == 'userEdit') {
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Berita</h1>
+            <h1 class="h3 mb-0 text-gray-800">Edit User</h1>
         </div>
-        <?php echo $this->session->flashdata('error'); ?>
+        <?php echo $this->session->flashdata('pesan'); ?>
 
         <div class="col-md-12">
             <div class="card shadow">
@@ -1754,61 +1981,158 @@ else if ($page == 'userEdit') {
 //==================================== ProfileToko ====================================
 else if ($page == 'profilToko') {
 ?>
+
     <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-3">
+            <h1 class="h3 mb-0 text-gray-800">Profil Toko</h1>
+        </div>
+        <?php echo $this->session->flashdata('pesan'); ?>
         <div class="row h3">
-            <?php foreach ($toko as $t) : ?>
+            <?php foreach ($toko as $t) { ?>
                 <div class="col-10">
                 </div>
                 <div class="col-2">
-                    <a href="javascript:void(0)" onClick="edit_merchant()"><i class="far fa-edit"></i></a>
+                    <a href="<?php echo base_url("admin/profilTokoEdit/") . $t['id_toko']; ?>">
+                        <i class="far fa-edit"></i>
+                    </a>
                 </div>
                 <div class="col-5 mb-3">
                     Nama
                 </div>
                 <div class="col-7 d-flex">
                     <div class="pr-2">:</div>
-                    <div id="store_name"><?php echo $t->nm_toko; ?></div>
+                    <div id="store_name"><?php echo $t['nm_toko'] ?></div>
                 </div>
                 <div class="col-5 mb-3">
                     Nomor Telepon
                 </div>
                 <div class="col-7 d-flex">
                     <div class="pr-2">:</div>
-                    <div id="no_telp"><?php echo $t->no_telp; ?></div>
+                    <div id="no_telp"><?php echo $t['no_telp'] ?></div>
                 </div>
                 <div class="col-5 mb-3">
                     Alamat
                 </div>
                 <div class="col-7 d-flex">
                     <div class="pr-2">:</div>
-                    <div id="alamat"><?php echo $t->alamat; ?></div>
+                    <div id="alamat"><?php echo $t['alamat'] ?></div>
                 </div>
                 <div class="col-5 mb-3">
                     Instagram
                 </div>
                 <div class="col-7 d-flex">
                     <div class="pr-2">:</div>
-                    <div id="instagram"><?php echo $t->instagram; ?></div>
+                    <div id="instagram"><?php echo $t['instagram'] ?></div>
                 </div>
                 <div class="col-5 mb-3">
                     Facebook
                 </div>
                 <div class="col-7 d-flex">
                     <div class="pr-2">:</div>
-                    <div id="facebook"><?php echo $t->facebook; ?></div>
+                    <div id="facebook"><?php echo $t['facebook'] ?></div>
                 </div>
+
                 <div class="col-5 mb-3">
-                    Maps
+                    X
                 </div>
                 <div class="col-7 d-flex">
                     <div class="pr-2">:</div>
-                    <div id="store_description">-</div>
+                    <div id="store_description"><?php echo $t['longitude'] ?></div>
                 </div>
-            <?php endforeach; ?>
+
+                <div class="col-5 mb-3">
+                    Y
+                </div>
+                <div class="col-7 d-flex">
+                    <div class="pr-2">:</div>
+                    <div id="store_description"><?php echo $t['latitude'] ?></div>
+                </div>
+
+        </div>
+    <?php }; ?>
+    </div>
+
+
+    </div>
+
+
+<?php
+}
+
+//==================================== ProfileToko ====================================
+else if ($page == 'profilTokoEdit') {
+?>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-3">
+            <h1 class="h3 mb-0 text-gray-800">Edit Profil Toko</h1>
+        </div>
+        <?php echo $this->session->flashdata('error'); ?>
+
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
+                <div class="card-body">
+                    <form enctype="multipart/form-data" action="<?php echo base_url('admin/profilTokoEdit/' . $t['id_toko']); ?>" method="post">
+                        <div class="form-group">
+                            <label>Nama Toko</label>
+                            <input type="text" name="nm_toko" placeholder="Masukkan Nama Toko..." value="<?php echo set_value('nm_toko', $t['nm_toko']); ?>" class="form-control">
+                            <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_toko')); ?></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Nomor Telepon</label>
+                            <input type="text" name="no_telp" placeholder="Masukkan Nomor Telepon..." value="<?php echo set_value('no_telp', $t['no_telp']); ?>" class="form-control">
+                            <span class="badge badge-danger"><?php echo strip_tags(form_error('no_telp')); ?></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Alamat</label>
+                            <input type="text" name="alamat" placeholder="Masukkan Alamat..." value="<?php echo set_value('alamat', $t['alamat']); ?>" class="form-control">
+                            <span class="badge badge-danger"><?php echo strip_tags(form_error('alamat')); ?></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Instagram</label>
+                            <input type="text" name="instagram" placeholder="Masukkan Instagram..." value="<?php echo set_value('instagram', $t['instagram']); ?>" class="form-control">
+                            <span class="badge badge-danger"><?php echo strip_tags(form_error('instagram')); ?></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Facebook</label>
+                            <input type="text" name="facebook" placeholder="Masukkan Facebook..." value="<?php echo set_value('facebook', $t['facebook']); ?>" class="form-control">
+                            <span class="badge badge-danger"><?php echo strip_tags(form_error('facebook')); ?></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Lintang / Y</label>
+                            <input type="text" name="latitude" placeholder="Masukkan Y pada Maps..." value="<?php echo set_value('latitude', $t['latitude']); ?>" class="form-control">
+                            <span class="badge badge-danger"><?php echo strip_tags(form_error('latitude')); ?></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Bujur / X</label>
+                            <input type="text" name="longitude" placeholder="Masukkan X dari Maps..." value="<?php echo set_value('longitude', $t['longitude']); ?>" class="form-control">
+                            <span class="badge badge-danger"><?php echo strip_tags(form_error('longitude')); ?></span>
+                        </div>
+
+                        <!-- <div class="form-group">
+                            <label>Jumlah Barang</label><br>
+                            <input type="number" name="jumlah_barang" placeholder="Masukkan Jumlah Barang" class="form-control">
+                        </div> -->
+                        <div class="float-right">
+                            <a href="<?php echo base_url("admin/profilToko") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
+
+                    </form>
+                </div>
+            </div>
         </div>
 
     </div>
+    <!-- /.container-fluid -->
+
     </div>
+    <!-- End of Main Content -->
+
 <?php
 }
 
@@ -1829,7 +2153,7 @@ For more information about DataTables, please visit the <a target="_blank" href=
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Data Config</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Data Config Email</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -1914,7 +2238,7 @@ else if ($page == 'configEmailEdit') {
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Berita</h1>
+            <h1 class="h3 mb-0 text-gray-800">Edit Config Email</h1>
         </div>
         <?php echo $this->session->flashdata('error'); ?>
 
@@ -2019,6 +2343,236 @@ For more information about DataTables, please visit the <a target="_blank" href=
 
     </div>
     <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+
+<?php
+}
+
+//==================================== Kategori Tambah ====================================
+else if ($page == 'supplierTambah') {
+?>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-3">
+            <h1 class="h3 mb-0 text-gray-800">Tambah Supplier</h1>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
+                <div class="card-body">
+                    <form method="POST" action="<?php echo base_url("admin/supplierTambah"); ?>">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nama Supplier</label>
+                                    <input type="text" name="nm_supplier" placeholder="Masukkan Nama Supplier..." value="<?= set_value('nm_supplier') ?>" class="form-control">
+                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_supplier')); ?></span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nomor Telepon</label>
+                                    <input type="text" name="no_telp" placeholder="Masukkan Nomor Telepon..." value="<?= set_value('no_telp') ?>" class="form-control">
+                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('no_telp')); ?></span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Alamat</label>
+                                    <input type="text" name="alamat" placeholder="Masukkan Alamat..." value="<?= set_value('alamat') ?>" class="form-control">
+                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('alamat')); ?></span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            <a href="<?php echo base_url("admin/supplier") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+<?php
+}
+
+//==================================== Kategori Tambah ====================================
+else if ($page == 'supplierEdit') {
+?>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-3">
+            <h1 class="h3 mb-0 text-gray-800">Edit Supplier</h1>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
+                <div class="card-body">
+                    <form method="POST" action="<?php echo base_url("admin/supplierEdit/" . $s['id_supplier']) ?>">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nama Supplier</label>
+                                    <input type="text" name="nm_supplier" placeholder="Masukkan Kategori Barang..." value="<?php echo set_value('nm_supplier', $s['nm_supplier']); ?>" class="form-control">
+                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_supplier')); ?></span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nomor Telepon</label>
+                                    <input type="text" name="no_telp" placeholder="Masukkan Kategori Barang..." value="<?php echo set_value('no_telp', $s['no_telp']); ?>" class="form-control">
+                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('no_telp')); ?></span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Alamat</label>
+                                    <input type="text" name="alamat" placeholder="Masukkan Kategori Barang..." value="<?php echo set_value('alamat', $s['alamat']); ?>" class="form-control">
+                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('alamat')); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            <a href="<?php echo base_url("admin/supplier") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+
+<?php
+}
+
+//==================================== Suply Barang ====================================
+else if ($page == 'suplyBarang') {
+?>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-4 text-gray-800">Supplier</h1>
+            <a href="<?php echo base_url("admin/suplyBarangTambah") ?>" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-plus"></i> Tambah Supplier</a>
+        </div>
+
+        <?php echo $this->session->flashdata('pesan'); ?>
+
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Data Barang Supplier</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="myTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Barang</th>
+                                <th>Nama Supplier</th>
+                                <th>Qty</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $no = 1;
+                            foreach ($barang_supplier as $bs) { ?>
+                                <tr>
+                                    <td><?php echo $no++; ?></td>
+                                    <td><?php echo $bs['nm_barang']; ?></td>
+                                    <td><?php echo $bs['nm_supplier']; ?></td>
+                                    <td><?php echo $bs['qty']; ?></td>
+                                    <td>
+                                        <a href="<?php echo base_url("admin/supplierEdit/") . $bs['id_barang_supplier']; ?>"><span class="badge badge-success">Edit</span></a> |
+                                        <a href="<?php echo base_url("admin/supplierHapus/") . $bs['id_barang_supplier']; ?>" onclick="return confirm('Yakin menghapus data barang supplier?');"><span class="badge badge-danger">Hapus</span></a>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.container-fluid -->
+
+
+    </div>
+    <!-- End of Main Content -->
+
+
+<?php
+}
+
+//==================================== Suply Barang ====================================
+else if ($page == 'suplyBarangTambah') {
+?>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h1 class="h3 mb-4 text-gray-800">Tambah Suplai Barang</h1>
+
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header"><strong>Tambah Suplai Barang</strong></div>
+                <div class="card-body">
+                    <form action="<?php echo base_url('admin/prosesTambahSuplai'); ?>" method="POST">
+                        <div class="form-group">
+                            <label for="id_supplier">Nama Supplier</label>
+                            <select class="form-control" id="id_supplier" name="id_supplier">
+                                <?php foreach ($supplier as $s) { ?>
+                                    <option value="<?php echo $s['id_supplier']; ?>"><?php echo $s['nm_supplier']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="qty">Nama Barang</label>
+                            <input type="text" class="form-control" id="nm_barang" name="nm_barang" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="qty">Harga Jual</label>
+                            <input type="number" class="form-control" id="hrg_jual" name="hrg_jual" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="qty">Harga Beli</label>
+                            <input type="number" class="form-control" id="hrg_beli" name="hrg_beli" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="qty">Qty</label>
+                            <input type="number" class="form-control" id="qty" name="qty" min="1" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Tambah Barang</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /.container-fluid -->
+
+
 
     </div>
     <!-- End of Main Content -->

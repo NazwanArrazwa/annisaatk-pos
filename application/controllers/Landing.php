@@ -15,6 +15,7 @@ class Landing extends CI_Controller
         $data['toko'] = $this->m_landing->dtProfilToko();
         $data['title']    = 'Home | AnnisaATK';
         $data['page']    = 'home';
+        $data['kordinat'] = $this->m_landing->getCoordinates();
         $this->tampil($data);;
     }
 
@@ -57,12 +58,30 @@ class Landing extends CI_Controller
 
     public function semuaBerita()
     {
+
         //model
         $this->load->model('m_landing', 'tb_berita');
 
+        if ($this->input->post('keyword')) {
+            $data['keyword'] = $this->input->post('keyword');
+            $this->session->set_userdata('keyword', $data['keyword']);
+            $this->session->mark_as_temp('keyword', 3); // Menandai session sebagai sementara
+        } elseif ($this->session->userdata('keyword')) {
+            $data['keyword'] = $this->session->userdata('keyword');
+        } else {
+            $data['keyword'] = '';
+        }
+
+
+
         //config
+        $this->db->like('judul_berita', $data['keyword']);
+        $this->db->from('tb_berita');
+
         $config['base_url'] = 'http://localhost/annisaatk/landing/semuaBerita/index';
-        $config['total_rows'] = $this->tb_berita->hitungSemuaBerita();
+
+        $config['total_rows'] = $this->db->count_all_results();
+
         $config['per_page'] = 4;
 
         //styling
@@ -100,8 +119,8 @@ class Landing extends CI_Controller
 
         //Other
         $data['start'] = $this->uri->segment(4);
-        $data['berita'] = $this->tb_berita->dtBatasBerita($config['per_page'], $data['start']);
-        $data['title']    = 'Hubungi Kami | AnnisaATK';
+        $data['berita'] = $this->tb_berita->dtBatasBerita($config['per_page'], $data['start'], $data['keyword']);
+        $data['title']    = 'Semua Berita | AnnisaATK';
         $data['page']    = 'berita_semua';
 
         $this->tampil($data);

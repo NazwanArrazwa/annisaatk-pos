@@ -39,6 +39,7 @@
 </div>
 
 <!-- Bootstrap core JavaScript-->
+
 <script src=" <?php echo base_url('assets/'); ?>vendor/jquery/jquery.min.js"></script>
 <script src="<?php echo base_url('assets/'); ?>vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
@@ -46,7 +47,6 @@
 <script src="<?php echo base_url('assets/'); ?>vendor/jquery-easing/jquery.easing.min.js"></script>
 
 <!-- Custom scripts for all pages-->
-<script src="<?php echo base_url('assets/'); ?>izitoast/dist/js/iziToast.min.js" type="text/javascript"></script>
 <script src="<?php echo base_url('assets/'); ?>js/sb-admin-2.min.js"></script>
 
 <!-- Page level plugins -->
@@ -55,17 +55,37 @@
 <script src="<?php echo base_url('assets/'); ?>vendor/datatables/dataTables.bootstrap4.min.js"></script>
 <script src="<?php echo base_url('assets/'); ?>vendor/ckeditor/ckeditor.js"></script>
 <script src="<?php echo base_url('assets/'); ?>vendor/sweetalert2/dist/sweetalert2.all.min.js"></script>
+<script src="<?php echo base_url('assets/'); ?>vendor/pdfmake/pdfmake.min.js"></script>
+<script src="<?php echo base_url('assets/'); ?>vendor/pdfmake/vfs_fonts.js"></script>
+<script src="<?php echo base_url('assets/'); ?>vendor/jszip/jszip.min.js"></script>
+
 
 <!-- Page level custom scripts -->
 <script src="<?php echo base_url('assets/'); ?>js/demo/chart-pie-demo.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+<!-- DataTables Buttons JavaScript -->
+<script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+
+
+
 <!-- <script src="<?php echo base_url('assets/'); ?>vendor/jquery-datetimepicker/jquery.js"></script> -->
 
 <!-- <script src="<?php echo base_url('assets/'); ?>vendor/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js"></script> -->
 
 <script>
+    // Inisialisasi Select2 pada elemen <select>
+    $(document).ready(function() {
+        $('#id_supplier').select2();
+    });
+
     $(function() {
         $("#startdate").datepicker({
             autoHide: true,
@@ -79,109 +99,12 @@
             dateFormat: "yy-mm-dd"
         });
     });
-</script>
 
-
-<!-- 
-<script>
-    /*******************************************/
-    // Always Show Calendar on Ranges
-    /*******************************************/
-    $('.shawCalRanges').daterangepicker({
-        // autoApply: true,
-
-        locale: {
-            format: 'YYYY-MM-DD',
-            separator: " s.d "
-
-        },
-        startDate: moment().subtract(7, 'day'),
-
-        ranges: {
-            'Hari ini': [moment(), moment()],
-            'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            '7 hari yang lalu': [moment().subtract(6, 'days'), moment()],
-            '30 hari yang lalu': [moment().subtract(29, 'days'), moment()],
-            'Bulan ini': [moment().startOf('month'), moment().endOf('month')],
-            'Bulan lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        },
-        alwaysShowCalendars: true,
-    });
-</script> -->
-
-<!-- 
-<script type="text/javascript">
-    $(document).ready(function() {
-        var table_1 = $('#laporanTable').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "order": [],
-            "pageLength": 10,
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            "ajax": {
-                "url": "<?php echo site_url('admin/laporanKeuangan/') ?>",
-                "type": "POST",
-                "data": function(data) {
-                    data.tgl_awal = $('#rangetgl').val();
-                    data.tgl_akhir = $('#rangetgl').val();
-                }
-            },
-            "columnDefs": [{
-                "targets": [1],
-                "className": "text-right",
-                "render": $.fn.dataTable.render.number(',', '.', 0, 'Rp')
-            }],
-            "footerCallback": function(row, data, start, end, display) {
-                var api = this.api();
-                var intVal = function(i) {
-                    return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
-                };
-                var numFormat = $.fn.dataTable.render.number(',', '.', 0, 'Rp').display;
-                var pageTotal2 = api.column(1, {
-                    page: 'current'
-                }).data().reduce(function(a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-                $(api.column(2).footer()).html(numFormat(pageTotal2));
-            }
-        });
-
-        $('#btn-filter').click(function() {
-            table_1.ajax.reload();
-        });
-    });
-
-
-
-    function reload_table() {
-        table_1.ajax.reload(null, false); //reload datatable ajax 
-    }
-</script> -->
-
-
-<script>
     $('#modalConfig').modal('show');
-</script>
-<script>
     $('#barangTable').DataTable();
     // $('#memberTable').DataTable();
     $('#laporanTable').DataTable({
-
-        // 'ajax': {
-        //     'url': ' echo base_url("admin/laporanKeuangan"); ?>',
-        //     'type': 'POST'
-        // },
         'pageLength': 50,
-        // 'columns': [{
-        //         'data': 'tanggal'
-        //     },
-        //     {
-        //         'data': 'total_harga'
-        //     }
-        // ]
     });
 
 
@@ -228,12 +151,15 @@
         $.ajax({
             url: "<?= base_url(); ?>/admin/save_orders/",
             data: {
+                kasir: $('#kasir').val(),
                 kode_transaksi: $('#kode_transaksi').val(),
+                nm_pelanggan: $('#kode_member').val(),
                 bayar: bayar,
                 diskon: diskon,
                 kembali: kembali
             },
             method: "POST",
+
             success: function(data) {
                 $('#modal_struck').modal('show');
                 $('#content_struck').html(data);
@@ -246,30 +172,32 @@
 
 
     function save_transaction() {
-        // const d = new Date();
-        // let year = d.getFullYear();
-        // let day = String(d.getDate()).padStart(2, '0');
-        // let month = String(d.getMonth() + 1).padStart(2, '0');
-        // let code_transaction = `TRX${year}${day}${month}`;
         $.ajax({
             url: "<?php echo base_url('admin/create_transaction/') ?>",
             type: "POST",
             data: {
                 kode_transaksi: $('#kode_transaksi').val(),
+                input_bayar: $('#input_bayar').val(),
                 nm_pelanggan: $('#kode_member').val(),
+                diskon: $('#diskon').val(),
             },
             dataType: "json",
             success: function(result) {
-                $('#modal_struck').modal('hide');
-                alert("Transaksi Berhasil");
-                localStorage.removeItem("cartData");
-                window.location.reload();
+                if (result.status === 200) {
+                    $('#modal_struck').modal('hide');
+                    alert("Transaksi Berhasil");
+                    localStorage.removeItem("cartData");
+                    window.location.reload();
+                } else {
+                    alert("Terjadi kesalahan dalam transaksi");
+                }
             },
             error: function(err) {
-                alert('error transaksi');
+                alert("Terjadi kesalahan dalam transaksi");
             }
         });
     }
+
 
     function updateSubtotal() {
         $.ajax({
@@ -295,22 +223,23 @@
 
                     var inputBayar = parseFloat($("#input_bayar").val());
 
-                    if (inputBayar >= total && total !== 0) {
-                        $("#simpan_transaksi").removeAttr("disabled");
-                    } else {
+                    if (isNaN(inputBayar) || inputBayar < total || total === 0) {
                         $("#simpan_transaksi").attr("disabled", "disabled");
+                    } else {
+                        $("#simpan_transaksi").removeAttr("disabled");
                     }
 
                     // Jika keranjang kosong, kosongkan nilai input bayar dan input kembali
                     if (subtotal === 0) {
+                        $("#input_bayar").attr("disabled", "disabled");
                         $("#input_bayar").val('');
                         $("#input_kembali").val('0');
                     } else {
-                        if (inputBayar >= total) {
+                        if (isNaN(inputBayar) || inputBayar < total) {
+                            $("#input_kembali").val("0");
+                        } else {
                             var kembali = inputBayar - total;
                             $("#input_kembali").val(kembali);
-                        } else {
-                            $("#input_kembali").val("0");
                         }
                     }
                 } else {
@@ -320,12 +249,6 @@
             }
         });
     }
-
-
-    // // Ketika input bayar berubah, panggil fungsi updateSubtotal
-    // $("#input_bayar").on("input", function() {
-    //     updateSubtotal();
-    // });
 
     // Simpan data keranjang belanja ke penyimpanan lokal
     function saveCartData() {
@@ -417,11 +340,6 @@
         });
     });
 
-    // $('#btnTambahMember').click(function() {
-    //     getMemberData();
-    // });
-
-
 
     $("#barcode").on("keydown", function(event) {
         if (event.keyCode === 13) { // Check if Enter key is pressed (key code 13)
@@ -466,6 +384,7 @@
         $(".add_cart").click(function() {
             var product_id = $(this).data("productid");
             var product_name = $(this).data("productname");
+            var product_primary = $(this).data("productprimary");
             var product_price = parseFloat($(this).data("price")); // Ubah tipe data harga menjadi float
             var quantity = parseFloat($('#' + product_id).val()); // Ubah tipe data kuantitas menjadi float
 
@@ -476,6 +395,7 @@
                     data: {
                         product_id: product_id,
                         product_name: product_name,
+                        product_primary: product_primary,
                         product_price: product_price,
                         quantity: quantity
                     },
@@ -497,29 +417,6 @@
                 alert("Silakan masukkan jumlah yang valid!");
             }
         });
-
-
-
-
-        // function updateStockInDatabase(product_id, quantity) {
-        //     $.ajax({
-        //         url: "<?php echo base_url(); ?>admin/updateStock",
-        //         method: "POST",
-        //         data: {
-        //             product_id: product_id,
-        //             quantity: quantity
-        //         },
-        //         success: function(response) {
-        //             console.log('Stok diperbarui di database.');
-        //         },
-        //         error: function() {
-        //             console.log('Terjadi kesalahan saat memperbarui stok di database.');
-        //         }
-        //     });
-        // }
-
-
-
 
 
         $(document).on('click', '.remove_inventory', function() {
@@ -565,9 +462,7 @@
 
 
     });
-</script>
 
-<script>
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
@@ -580,9 +475,7 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-</script>
 
-<script>
     CKEDITOR.replace('customeditor', {
         // Tools Yang Dipakai
         toolbarGroups: [{
@@ -602,9 +495,7 @@
         // Tools Yang di remove
         removeButtons: 'Format,Strike,Subscript,Superscript,Anchor,Styles,Specialchar,PasteFromWord'
     });
-</script>
 
-<script>
     // Call the dataTables jQuery plugin
     $(document).ready(function() {
         $('#myTable').DataTable({
@@ -615,61 +506,14 @@
             "info": true,
             "autoWidth": false,
             "responsive": true,
-            // "dom": 'Blfrtip',
-            // "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            "buttons": ["copy", "excel", "pdf", "print"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            "dom": 'Blfrtip',
+            "buttons": ["copy", "excel", "pdf", "print", "colvis"]
+            //"buttons": ["copy", "excel", "pdf", "print"]
+        }).buttons().container().appendTo('#myTable_wrapper .dataTables_filter');
+
 
     });
-</script>
 
-<!-- 
-<script>
-    var modal = $('#modalData');
-    var tableData = $('#myTable');
-    var formData = $('#formData');
-    var btnSave = $('#btnSave');
-
-    function add() {
-        modal.modal('show');
-    }
-
-
-    function save() {
-        btnSave.text('Mohon Tunggu....');
-        btnSave.attr('disabled', true);
-        url = ""
-
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: formData.serialize(),
-            dataType: "JSON",
-            success: function(response) {
-                if (response.status = 'success') {
-                    modal.modal('hide');
-                    window.location.reload();
-                }
-            },
-            error: function() {
-                console.log('Error Database');
-            }
-        });
-    }
-</script> -->
-
-
-<script>
-    setTimeout(function() {
-        $('.preloader').fadeOut(1000);
-    }, 500);
-
-    $(function() {
-        $('.alert').delay(2000).fadeOut(1500);
-    })
-</script>
-<!-- Chart -->
-<script>
     Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
     Chart.defaults.global.defaultFontColor = '#858796';
 
@@ -699,8 +543,8 @@
     }
 
     $(document).ready(function() {
-        $("body").toggleClass("sidebar-toggled");
-        $(".sidebar").toggleClass("toggled");
+        // $("body").toggleClass("sidebar-toggled");
+        // $(".sidebar").toggleClass("toggled");
         dtTahunan();
     });
 
@@ -808,8 +652,147 @@
             }
         });
     }
+
+    setTimeout(function() {
+        $('.preloader').fadeOut(1000);
+    }, 500);
+
+    $(function() {
+        $('.alert').delay(2000).fadeOut(1500);
+    })
 </script>
 
+
+<!-- 
+<script>
+    var modal = $('#modalData');
+    var tableData = $('#myTable');
+    var formData = $('#formData');
+    var btnSave = $('#btnSave');
+
+    function add() {
+        modal.modal('show');
+    }
+
+
+    function save() {
+        btnSave.text('Mohon Tunggu....');
+        btnSave.attr('disabled', true);
+        url = ""
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: formData.serialize(),
+            dataType: "JSON",
+            success: function(response) {
+                if (response.status = 'success') {
+                    modal.modal('hide');
+                    window.location.reload();
+                }
+            },
+            error: function() {
+                console.log('Error Database');
+            }
+        });
+    }
+
+     // function updateStockInDatabase(product_id, quantity) {
+    //     $.ajax({
+    //         url: "<?php echo base_url(); ?>admin/updateStock",
+    //         method: "POST",
+    //         data: {
+    //             product_id: product_id,
+    //             quantity: quantity
+    //         },
+    //         success: function(response) {
+    //             console.log('Stok diperbarui di database.');
+    //         },
+    //         error: function() {
+    //             console.log('Terjadi kesalahan saat memperbarui stok di database.');
+    //         }
+    //     });
+    // }
+</script> -->
+
+<!-- 
+<script>
+    /*******************************************/
+    // Always Show Calendar on Ranges
+    /*******************************************/
+    $('.shawCalRanges').daterangepicker({
+        // autoApply: true,
+
+        locale: {
+            format: 'YYYY-MM-DD',
+            separator: " s.d "
+
+        },
+        startDate: moment().subtract(7, 'day'),
+
+        ranges: {
+            'Hari ini': [moment(), moment()],
+            'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            '7 hari yang lalu': [moment().subtract(6, 'days'), moment()],
+            '30 hari yang lalu': [moment().subtract(29, 'days'), moment()],
+            'Bulan ini': [moment().startOf('month'), moment().endOf('month')],
+            'Bulan lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        alwaysShowCalendars: true,
+    });
+</script> -->
+
+<!-- 
+<script type="text/javascript">
+    $(document).ready(function() {
+        var table_1 = $('#laporanTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "order": [],
+            "pageLength": 10,
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            "ajax": {
+                "url": "<?php echo site_url('admin/laporanKeuangan/') ?>",
+                "type": "POST",
+                "data": function(data) {
+                    data.tgl_awal = $('#rangetgl').val();
+                    data.tgl_akhir = $('#rangetgl').val();
+                }
+            },
+            "columnDefs": [{
+                "targets": [1],
+                "className": "text-right",
+                "render": $.fn.dataTable.render.number(',', '.', 0, 'Rp')
+            }],
+            "footerCallback": function(row, data, start, end, display) {
+                var api = this.api();
+                var intVal = function(i) {
+                    return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                };
+                var numFormat = $.fn.dataTable.render.number(',', '.', 0, 'Rp').display;
+                var pageTotal2 = api.column(1, {
+                    page: 'current'
+                }).data().reduce(function(a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+                $(api.column(2).footer()).html(numFormat(pageTotal2));
+            }
+        });
+
+        $('#btn-filter').click(function() {
+            table_1.ajax.reload();
+        });
+    });
+
+
+
+    function reload_table() {
+        table_1.ajax.reload(null, false); //reload datatable ajax 
+    }
+</script> -->
 
 </body>
 

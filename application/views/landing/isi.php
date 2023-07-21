@@ -6,77 +6,59 @@ if ($page == 'home') {
     <!-- ***** Main Banner Area Start ***** -->
     <!-- PRE LOADER -->
     <section class="preloader">
-        <div class="spinner">
-
-            <span class="spinner-rotate"></span>
-
+        <div class="cart-loader">
+            <div class="graph-loading">
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+            </div>
+        </div>
         </div>
     </section>
-    <div class="swiper-container" id="top">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide">
-                <div class="slide-inner" style="background-image:url(assets/images/home-page-1.png)">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-8">
+
+    <section id="top">
+        <div class="main-banner" id="top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="owl-carousel owl-banner">
+                            <div class="item item-1">
+                                <div class="header-text">
+                                    <h2>Temukan <em>Alat Tulis</em> yang Tepat untuk Setiap <em>Kebutuhan!</em></h2>
+                                    <!-- <p>Scholar is free CSS template designed by TemplateMo for online educational related websites. This layout is based on the famous Bootstrap v5.3.0 framework.</p> -->
+                                    <div class="buttons">
+                                        <div class="main-button scroll-to-section">
+                                            <a href="#berita">Telusuri Lebih Lanjut</a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item item-2">
                                 <div class="header-text">
 
-                                    <h2>Temukan <em>Alat Tulis</em> yang Tepat untuk Setiap <em>Kebutuhan!</em></h2>
-                                    <div class="div-dec"></div>
-                                    <p></p>
-                                    <div class="buttons">
-                                        <div class="green-button scroll-to-section">
-                                            <a href="#berita">Discover More</a>
-                                        </div>
-                                        <div class="orange-button">
-                                            <a href="#">Contact Us</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="swiper-slide">
-                <div class="slide-inner" style="background-image:url(assets/images/home-page-2.png)">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <div class="header-text">
                                     <h2> Memberikan <em>Layanan Terbaik </em>Dan<em> Produk Terpercaya </em> untuk Anda!</h2>
-                                    <div class="div-dec"></div>
-                                    <p></p>
+                                    <!-- <p>You are allowed to use this template for any educational or commercial purpose. You are not allowed to re-distribute the template ZIP file on any other website.</p> -->
                                     <div class="buttons">
-                                        <div class="green-button scroll-to-section">
-                                            <a href="#berita">Discover More</a>
+                                        <div class="main-button scroll-to-section">
+                                            <a href="#berita">Telusuri Lebih Lanjut</a>
                                         </div>
-                                        <div class="orange-button">
-                                            <a href="#">Contact Us</a>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="swiper-slide">
-                <div class="slide-inner" style="background-image:url(assets/images/home-page-3.png)">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-8">
+                            <div class="item item-3">
                                 <div class="header-text">
+
                                     <h2>Menghadirkan <em>Solusi Alat Tulis</em> yang Membuat <em>Hidup Lebih Berwarna!</em></h2>
-                                    <div class="div-dec"></div>
-                                    <p></p>
+                                    <!-- <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporious incididunt ut labore et dolore magna aliqua suspendisse.</p> -->
                                     <div class="buttons">
-                                        <div class="green-button scroll-to-section">
-                                            <a href="#berita">Discover More</a>
+                                        <div class="main-button scroll-to-section">
+                                            <a href="#berita">Telusuri Lebih Lanjut</a>
                                         </div>
-                                        <div class="orange-button">
-                                            <a href="#">Contact Us</a>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -85,9 +67,7 @@ if ($page == 'home') {
                 </div>
             </div>
         </div>
-
-    </div>
-
+    </section>
     <!-- ***** Main Banner Area End ***** -->
 
     <!-- Banner Ends Here -->
@@ -100,58 +80,77 @@ if ($page == 'home') {
                             <h2>Berita Terbaru</h2>
                             <a href="<?php echo base_url('landing/semuaBerita'); ?>">Lihat Semua Berita <i class="fa fa-angle-right"></i></a>
                         </div>
-                        <?php
-                        $counter = 0;
-                        foreach ($berita as $b) :
-                            if ($counter >= 3) {
-                                break; // Menghentikan iterasi setelah mencapai batas 4
-                            }
-                        ?>
                     </div>
-
-                    <div class="col-md-4">
-                        <div class="product-item">
-
-                            <a href="<?php echo base_url('landing/berita/') . $b['id_berita']; ?>"><img class="gambarBeritaTerbaru" src="<?php echo base_url('uploads/gambarBerita/'); ?><?= $b['gambar_berita']; ?>"></a>
-
-                            <div class="down-content">
-                                <a href="<?php echo base_url('landing/berita/') . $b['id_berita']; ?>">
-                                    <h4><?= $b['judul_berita']; ?></h4>
-                                </a>
-                                <?php
-                                $batasanKarakter = 100;
-                                $isiBerita =  $b['isi_berita'];
-                                if (strlen($isiBerita) > $batasanKarakter) {
-                                    $isiBerita = substr($isiBerita, 0, $batasanKarakter) . '...';
-                                }
-                                ?>
-
-                                <p class="isiBerita"><?= $isiBerita; ?>
-                                </p>
-
-                            </div>
-
-
-                        </div>
 
                     <?php
+                    $counter = 0;
+                    if (empty($berita)) {
+                    ?>
+                        <!-- Error Page -->
+                        <div class="error">
+                            <div class="container-floud">
+                                <div class="col-xs-12 ground-color text-center">
+                                    <div class="container-error-404">
+                                        <div class="clip">
+                                            <div class="shadow"><span class="digit thirdDigit"></span></div>
+                                        </div>
+                                        <div class="clip">
+                                            <div class="shadow"><span class="digit secondDigit"></span></div>
+                                        </div>
+                                        <div class="clip">
+                                            <div class="shadow"><span class="digit firstDigit"></span></div>
+                                        </div>
+                                        <div class="msg">OH!<span class="triangle"></span></div>
+                                    </div>
+                                    <h2 class="h1">Maaf! Berita Yang Anda Cari Tidak Ditemukan</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Error Page -->
+                        <?php
+                    } else {
+                        foreach ($berita as $b) :
+                            if ($counter >= 3) {
+                                break; // Menghentikan iterasi setelah mencapai batas 3
+                            }
+                        ?>
+                            <div class="col-md-4">
+                                <div class="product-item">
+                                    <a href="<?php echo base_url('landing/berita/') . $b['id_berita']; ?>"><img class="gambarBeritaTerbaru" src="<?php echo base_url('uploads/gambarBerita/'); ?><?= $b['gambar_berita']; ?>"></a>
+                                    <div class="down-content">
+                                        <a href="<?php echo base_url('landing/berita/') . $b['id_berita']; ?>">
+                                            <h4><?= $b['judul_berita']; ?></h4>
+                                        </a>
+                                        <?php
+                                        $batasanKarakter = 100;
+                                        $isiBerita =  $b['isi_berita'];
+                                        if (strlen($isiBerita) > $batasanKarakter) {
+                                            $isiBerita = substr($isiBerita, 0, $batasanKarakter) . '...';
+                                        }
+                                        ?>
+                                        <p class="isiBerita"><?= $isiBerita; ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                    <?php
                             $counter++;
-                        endforeach ?>
-                    </div>
+                        endforeach;
+                    }
+                    ?>
 
                 </div>
-
             </div>
-
         </div>
     </section>
+
+
 
     <section class="top-section" id="tentangKami">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="left-image">
-                        <img src="assets/images/about-left-image.jpg" alt="">
+                        <img src="<?php echo base_url('assets/') ?>images/content-img-2.jpg" alt="">
                     </div>
                 </div>
                 <div class="col-lg-6 align-self-center mb-5">
@@ -208,7 +207,7 @@ if ($page == 'home') {
             <div class="row">
                 <div class="col-lg-12">
                     <div id="map">
-                        <div style="width: 100%"><iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=politeknik%20negeri%20banjarmasin+(AnnisaATK%20Banjarmasin)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.maps.ie/distance-area-calculator.html">area maps</a></iframe></div>
+                        <!-- <div style="width: 100%"><iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=politeknik%20negeri%20banjarmasin+(AnnisaATK%20Banjarmasin)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.maps.ie/distance-area-calculator.html">area maps</a></iframe></div> -->
                     </div>
                 </div>
                 <div class="col-lg-10 offset-lg-1 mb-5">
@@ -264,6 +263,21 @@ if ($page == 'home') {
                         <div class="section-heading">
                             <h2>Semua Berita</h2>
                         </div>
+                        <?php if (empty($berita)) : ?>
+
+
+
+                            <!-- Error Page -->
+                            <div class="section">
+                                <h1 class="error">404</h1>
+                                <div class="page">Maaf! Berita Yang Kamu Cari Tidak Ditemukan</div>
+                                <a class="back-home" href="<?php echo base_url('/') ?>">Kembali Ke Home</a>
+                            </div>
+                            <br><br><br><br><br><br><br><br><br><br><br>
+                            <!-- Error Page -->
+
+
+                        <?php endif; ?>
                         <?php
 
                         foreach ($berita as $b) :
@@ -332,6 +346,7 @@ else if ($page == 'berita') {
             <div class="row">
                 <div class="col-lg-12">
                     <div class="left-content">
+
                         <img src="<?php echo base_url('uploads/gambarBerita/'); ?><?= $b['gambar_berita']; ?>" alt="">
                         <h3><?php echo $b['judul_berita']; ?></h3>
                         <h4> <i>Penulis :</i> <?php echo $b['nama_pengirim']; ?></h4>
