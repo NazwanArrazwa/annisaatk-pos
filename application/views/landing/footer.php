@@ -32,7 +32,7 @@
 
     // Membuat peta
     const map = L.map('map', {
-        dragging: false,
+        dragging: true,
         scrollWheelZoom: false,
         touchZoom: false, // Menonaktifkan zoom dengan menyentuh pada layar sentuh
         doubleClickZoom: false // Menonaktifkan zoom dengan double click pada layar sentuh

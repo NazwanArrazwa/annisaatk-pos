@@ -248,10 +248,15 @@ if ($page == 'home') {
 ?>
     <!-- PRE LOADER -->
     <section class="preloader">
-        <div class="spinner">
-
-            <span class="spinner-rotate"></span>
-
+        <div class="cart-loader">
+            <div class="graph-loading">
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+            </div>
+        </div>
         </div>
     </section>
     <!-- Banner Ends Here -->
@@ -327,6 +332,19 @@ if ($page == 'home') {
 //==================================== beritaDetail ====================================
 else if ($page == 'berita') {
 ?>
+    <!-- PRE LOADER -->
+    <section class="preloader">
+        <div class="cart-loader">
+            <div class="graph-loading">
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+                <span class="graph-loading__bar"></span>
+            </div>
+        </div>
+        </div>
+    </section>
 
     <div class="page-heading">
         <div class="container">
@@ -346,26 +364,25 @@ else if ($page == 'berita') {
             <div class="row">
                 <div class="col-lg-12">
                     <div class="left-content">
-
-                        <img src="<?php echo base_url('uploads/gambarBerita/'); ?><?= $b['gambar_berita']; ?>" alt="">
+                        <center><img src="<?php echo base_url('uploads/gambarBerita/'); ?><?= $b['gambar_berita']; ?>" alt="" style="max-width: 50%; max-height: 50%; "></center>
                         <h3><?php echo $b['judul_berita']; ?></h3>
                         <h4> <i>Penulis :</i> <?php echo $b['nama_pengirim']; ?></h4>
+                        <hr>
                         <div class="card-text">
                             <p>
                                 <?php
-                                // echo $b['isi_berita'];
                                 $isi_berita = $b['isi_berita'];
                                 $modified_isi_berita = str_replace('<p>', '<p class="isiDetailBerita">', $isi_berita);
                                 echo $modified_isi_berita;
                                 ?>
                             </p>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
     <!-- Banner Ends Here -->
     <section class="berita-terbaru" id="berita">
         <div class="latest-products">
