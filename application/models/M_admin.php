@@ -434,11 +434,15 @@ class M_admin extends CI_Model
     }
 
     //===============  BERITA ===================
-    public function dtBerita($id = FALSE)
+    public function dtBerita($startdate = false, $enddate = false)
     {
 
         $this->db->select('*');
         $this->db->from('tb_berita');
+        if ($startdate && $enddate) {
+            $this->db->where('DATE(tanggal) >=', $startdate);
+            $this->db->where('DATE(tanggal) <=', $enddate);
+        }
         $this->db->order_by('id_berita', 'DESC');
         $query = $this->db->get();
         return $query->result_array();

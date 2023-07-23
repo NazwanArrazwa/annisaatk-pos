@@ -162,7 +162,7 @@ else if ($page == 'changePassword') {
 
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-4 text-gray-800">Ubah Password</h1>
-            <!-- <a href="<?php echo base_url("admin/barangTambah") ?>" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-plus"></i> Tambah Barang</a> -->
+
         </div>
         <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
 For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p> -->
@@ -422,7 +422,6 @@ else if ($page == 'kasir') {
                                         <td><input type="text" name="quantity" class="form-control quantity" id="<?php echo $b['barcode']; ?>"></td>
                                         <td>
                                             <button type="button" name="add_cart" class="btn btn-success btn-sm add_cart" data-productname="<?php echo $b['nm_barang']; ?>" data-price="<?php echo $b['hrg_jual']; ?>" data-productid="<?php echo $b['barcode']; ?>" data-productprimary="<?php echo $b['id_barang']; ?>"><i class="fa fa-cart-plus"></i> Tambah</button>
-
                                         </td>
                                     </tr>
                                 <?php } ?>
@@ -535,14 +534,14 @@ else if ($page == 'penjualanBarang') {
                 <button type="button" class="btn btn-primary btn-sm" data-target="#modal" data-toggle="modal">
                     <i class="fa-solid fa-calendar-days"></i> Ubah Periode
                 </button>
-                <button class="btn btn-warning btn-sm  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i> Export</button>
+                <!-- <button class="btn btn-warning btn-sm  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i> Export</button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="<?php echo $downloadLink; ?>"><i class="fas fa-file-excel fa-sm"></i> Excel</a>
 
 
 
                     <a class="dropdown-item" href="#" target="_blank"><i class=" fas fa-file-pdf fa-sm"></i> PDF</a>
-                </div>
+                </div> -->
             </div>
 
             <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Tambah Pelanggan</a> -->
@@ -560,9 +559,9 @@ For more information about DataTables, please visit the <a target="_blank" href=
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="<?php echo base_url('admin/penjualanBarang'); ?>" method="get">
-                            <input type="text" class="form-control mb-2" name="startdate" id="startdate" placeholder="Tanggal Awal..." required>
-                            <input type="text" class="form-control mb-2" name="enddate" id="enddate" placeholder="Tanggal Akhir..." req>
+                        <form action="<?php echo base_url('admin/penjualanBarang'); ?>" method="post">
+                            <input type="text" class="form-control mb-2" name="startdate" id="startdate" autocomplete="off" placeholder="Tanggal Awal..." required>
+                            <input type="text" class="form-control mb-2" name="enddate" id="enddate" autocomplete="off" placeholder="Tanggal Akhir..." req>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary mb-2">Set</button>
@@ -581,7 +580,7 @@ For more information about DataTables, please visit the <a target="_blank" href=
 
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped nowrap display" width="100%" cellspacing="0" id="laporanTable">
+                    <table class="table table-bordered table-striped nowrap display" width="100%" cellspacing="0" id="myTable">
                         <thead>
                             <tr>
                                 <th class="border-0 text-center">Tanggal</th>
@@ -608,7 +607,6 @@ For more information about DataTables, please visit the <a target="_blank" href=
                                     <td class="text-center"><?php echo 'Rp. ' . number_format($lp['hrg_jual'] * $lp['jumlah_jual'], 0, ',', '.'); ?></td>
                                     <td class="text-center"><?php echo $lp['last_qty'];
                                                             ?></td>
-
                                 </tr>
                             <?php } ?>
                         </tbody>
@@ -651,14 +649,7 @@ else if ($page == 'laporanPendapatan') {
                 <button type="button" class="btn btn-primary btn-sm" data-target="#modal" data-toggle="modal">
                     <i class="fa-solid fa-calendar-days"></i> Ubah Periode
                 </button>
-                <button class="btn btn-warning btn-sm  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i> Export</button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="<?php echo $downloadLink; ?>"><i class="fas fa-file-excel fa-sm"></i> Excel</a>
 
-
-
-                    <a class="dropdown-item" href="#" target="_blank"><i class=" fas fa-file-pdf fa-sm"></i> PDF</a>
-                </div>
             </div>
 
             <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Tambah Pelanggan</a> -->
@@ -679,9 +670,9 @@ For more information about DataTables, please visit the <a target="_blank" href=
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="<?php echo base_url('admin/laporanKeuangan'); ?>" method="get">
-                            <input type="text" class="form-control mb-2" name="startdate" id="startdate" placeholder="Tanggal Awal..." required>
-                            <input type="text" class="form-control mb-2" name="enddate" id="enddate" placeholder="Tanggal Akhir..." req>
+                        <form action="<?php echo base_url('admin/laporanKeuangan'); ?>" method="post">
+                            <input type="text" class="form-control mb-2" name="startdate" id="startdate" autocomplete="off" placeholder="Tanggal Awal..." required>
+                            <input type="text" class="form-control mb-2" name="enddate" id="enddate" autocomplete="off" placeholder="Tanggal Akhir..." req>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary mb-2">Set</button>
@@ -719,7 +710,7 @@ For more information about DataTables, please visit the <a target="_blank" href=
 
 
                 <div class="table-responsive no-wrap">
-                    <table class="table table-bordered table-striped nowrap display" width="100%" cellspacing="0" id="laporanTable">
+                    <table class="table table-bordered table-striped nowrap display" width="100%" cellspacing="0" id="myTable">
                         <thead>
                             <tr>
                                 <th class="border-0 text-center">Tanggal</th>
@@ -987,7 +978,7 @@ else if ($page == 'barangTambah') {
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Barang</h1>
+            <h1 class="h3 mb-0 text-gray-800">Tambah Barang</h1>
         </div>
 
         <div class="col-md-12">
@@ -998,7 +989,7 @@ else if ($page == 'barangTambah') {
                         <div class="form-row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="kategori" class="form-label">Pilih Kategori Barang</label>
+                                    <label for="kategori" class="form-label">Pilih Supplier</label>
                                     <?php echo form_dropdown('id_supplier', $ddsupplier, set_value('id_supplier'), 'class="form-control"'); ?>
                                     <span class="badge badge-warning"><?php echo strip_tags(form_error('id_supplier')); ?></span>
 
@@ -1075,7 +1066,7 @@ else if ($page == 'barangEdit') {
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Barang</h1>
+            <h1 class="h3 mb-0 text-gray-800">Edit Barang</h1>
         </div>
 
         <div class="col-md-12">
@@ -1263,7 +1254,7 @@ else if ($page == 'kategoriTambah') {
 <?php
 }
 
-//==================================== Kategori Tambah ====================================
+//==================================== Kategori Edit ====================================
 else if ($page == 'kategoriEdit') {
 ?>
     <!-- Begin Page Content -->
@@ -1416,7 +1407,7 @@ else if ($page == 'satuanTambah') {
 <?php
 }
 
-//==================================== Kategori Tambah ====================================
+//==================================== Satuan Edit ====================================
 else if ($page == 'satuanEdit') {
 ?>
     <!-- Begin Page Content -->
@@ -1475,11 +1466,11 @@ else if ($page == 'pelanggan') {
 
             <div class="dropdown">
                 <a href="<?php echo base_url("admin/pelangganTambah") ?>" class="btn btn-primary btn-sm "><i class="fa fa-plus"></i> Tambah Pelanggan</a>
-                <button class="btn btn-warning btn-sm  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i> Export</button>
+                <!-- <button class="btn btn-warning btn-sm  dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i> Export</button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="#" target="_blank"><i class=" fas fa-file-excel fa-sm"></i> Excel</a>
                     <a class="dropdown-item" href="#" target="_blank"><i class=" fas fa-file-pdf fa-sm"></i> PDF</a>
-                </div>
+                </div> -->
             </div>
 
             <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Tambah Pelanggan</a> -->
@@ -1553,7 +1544,7 @@ else if ($page == 'pelangganTambah') {
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Pelanggan</h1>
+            <h1 class="h3 mb-0 text-gray-800">Tambah Pelanggan</h1>
         </div>
 
         <div class="col-md-6">
@@ -1679,8 +1670,38 @@ else if ($page == 'berita') {
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-4 text-gray-800">Berita</h1>
-            <a href="<?php echo base_url("admin/beritaTambah") ?>" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Tambah Berita</a>
+            <h1 class="h3 mb-0 text-gray-800">Berita</h1>
+
+            <div class="dropdown">
+                <a href="<?php echo base_url("admin/beritaTambah") ?>" class="btn btn-primary btn-sm "><i class="fa fa-plus"></i> Tambah Pelanggan</a>
+                <button type="button" class="btn btn-success btn-sm" data-target="#modal" data-toggle="modal">
+                    <i class="fa-solid fa-calendar-days"></i> Ubah Periode
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="modal" role="dialog" aria-labelledby="modalLabel" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">Datepicker</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="<?php echo base_url('admin/berita'); ?>" method="post">
+                            <input type="text" class="form-control mb-2" name="startdate" id="startdate" placeholder="Tanggal Awal..." autocomplete="off" required>
+                            <input type="text" class="form-control mb-2" name="enddate" id="enddate" placeholder="Tanggal Akhir..." autocomplete="off" req>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary mb-2">Set</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
         For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p> -->
@@ -1702,7 +1723,7 @@ else if ($page == 'berita') {
                                 <th>Gambar Berita</th>
                                 <th>Pengirim</th>
                                 <th>Waktu Dibuat</th>
-                                <th>Aksi</th>
+                                <th class="exclude-export">Aksi</th>
 
                             </tr>
 
@@ -1746,7 +1767,7 @@ else if ($page == 'beritaTambah') {
     <div class="container-fluid">
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Berita</h1>
+            <h1 class="h3 mb-0 text-gray-800">Tambah Berita</h1>
         </div>
         <?php echo $this->session->flashdata('error'); ?>
 
@@ -2351,7 +2372,7 @@ For more information about DataTables, please visit the <a target="_blank" href=
 <?php
 }
 
-//==================================== Kategori Tambah ====================================
+//==================================== supplier Tambah ====================================
 else if ($page == 'supplierTambah') {
 ?>
     <!-- Begin Page Content -->
@@ -2406,7 +2427,7 @@ else if ($page == 'supplierTambah') {
 <?php
 }
 
-//==================================== Kategori Tambah ====================================
+//==================================== Supplier Edit ====================================
 else if ($page == 'supplierEdit') {
 ?>
     <!-- Begin Page Content -->

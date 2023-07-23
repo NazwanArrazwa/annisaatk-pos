@@ -72,7 +72,6 @@
 <!-- DataTables Buttons JavaScript -->
 <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
 
 
 
@@ -498,7 +497,7 @@
 
     // Call the dataTables jQuery plugin
     $(document).ready(function() {
-        $('#myTable').DataTable({
+        var table = $('#myTable').DataTable({
             "paging": true,
             "lengthChange": true,
             "searching": true,
@@ -507,13 +506,28 @@
             "autoWidth": false,
             "responsive": true,
             "dom": 'Blfrtip',
-            "buttons": ["copy", "excel", "pdf", "print", "colvis"]
-            //"buttons": ["copy", "excel", "pdf", "print"]
+            "buttons": [{
+                    extend: "excelHtml5",
+                    text: "Excel",
+                    exportOptions: {
+                        orthogonal: "export", // To exclude the "Aksi" column from export
+                        columns: ":not(.exclude-export)" // Add class 'exclude-export' to exclude specific columns
+                    }
+                },
+                {
+                    extend: "pdfHtml5",
+                    text: "PDF",
+                    exportOptions: {
+                        orthogonal: "export", // To exclude the "Aksi" column from export
+                        columns: ":not(.exclude-export)" // Add class 'exclude-export' to exclude specific columns
+                    }
+                }
+            ]
         }).buttons().container().appendTo('#myTable_wrapper .dataTables_filter');
-
-
     });
 
+
+    //Chart
     Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
     Chart.defaults.global.defaultFontColor = '#858796';
 
