@@ -78,8 +78,42 @@
 <!-- <script src="<?php echo base_url('assets/'); ?>vendor/jquery-datetimepicker/jquery.js"></script> -->
 
 <!-- <script src="<?php echo base_url('assets/'); ?>vendor/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js"></script> -->
-
 <script>
+    // Inisialisasi DataTable Server Side
+    $('#barangTable').DataTable({
+        "language": {
+            //"zeroRecords": "Silahkan Search Data Barang Terlebih Dahulu",
+            "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json",
+        },
+        "processing": true,
+        "serverSide": true,
+        "searching": true,
+        "order": [],
+        "ajax": {
+            "url": 'barangList',
+            "type": "POST"
+        },
+        "initComplete": function() {
+            var dataTable = this.api();
+            var inputSearch = $('#barangTable_filter input');
+
+            inputSearch.unbind().bind('keyup', function(e) {
+                if (this.value.length >= 3 || this.value.length === 0) {
+                    dataTable.search(this.value).draw();
+                } else {
+                    // Hapus data yang ada ketika tabel diinisialisasi
+                    dataTable.clear().draw();
+                }
+            });
+
+            // Hapus data yang ada ketika tabel diinisialisasi
+            //dataTable.clear().draw();
+        }
+    });
+</script>
+<script>
+    //Count Animation
+
     // Inisialisasi Select2 pada elemen <select>
     $(document).ready(function() {
         $('#id_supplier').select2();
@@ -100,7 +134,6 @@
     });
 
     $('#modalConfig').modal('show');
-    $('#barangTable').DataTable();
     // $('#memberTable').DataTable();
     $('#laporanTable').DataTable({
         'pageLength': 50,
@@ -185,8 +218,8 @@
                 if (result.status === 200) {
                     $('#modal_struck').modal('hide');
                     alert("Transaksi Berhasil");
-                    localStorage.removeItem("cartData");
-                    window.location.reload();
+                    //localStorage.removeItem("cartData");
+                    DataTable().ajax.reload();
                 } else {
                     alert("Terjadi kesalahan dalam transaksi");
                 }
@@ -200,7 +233,7 @@
 
     function updateSubtotal() {
         $.ajax({
-            url: "<?= base_url(); ?>admin/getSubtotal/",
+            url: "<?= base_url(); ?>admin/getTotal/",
             method: "GET",
             success: function(data) {
                 var subtotal = parseFloat(data);
@@ -218,7 +251,7 @@
                     var total = subtotal - (subtotal * diskon);
 
                     // Menetapkan nilai total setelah diskon dengan format mata uang
-                    $("#total_input").val("Rp. " + total.toLocaleString('id-ID'));
+                    $("#total_input").text(total.toLocaleString('id-ID'));
 
                     var inputBayar = parseFloat($("#input_bayar").val());
 
@@ -234,6 +267,7 @@
                         $("#input_bayar").val('');
                         $("#input_kembali").val('0');
                     } else {
+                        $("#input_bayar").removeAttr("disabled");
                         if (isNaN(inputBayar) || inputBayar < total) {
                             $("#input_kembali").val("0");
                         } else {
@@ -250,10 +284,10 @@
     }
 
     // Simpan data keranjang belanja ke penyimpanan lokal
-    function saveCartData() {
-        var cartData = $("#cart_detail").html();
-        localStorage.setItem("cartData", cartData);
-    }
+    // function saveCartData() {
+    //     var cartData = $("#cart_detail").html();
+    //     localStorage.setItem("cartData", cartData);
+    // }
 
     // Metode untuk memuat tampilan tabel keranjang belanja
     function loadCartData() {
@@ -266,14 +300,13 @@
     }
 
 
-
     // Memulihkan data keranjang belanja dari penyimpanan lokal
-    function restoreCartData() {
-        var cartData = localStorage.getItem("cartData");
-        if (cartData) {
-            $("#cart_detail").html(cartData);
-        }
-    }
+    // function restoreCartData() {
+    //     var cartData = localStorage.getItem("cartData");
+    //     if (cartData) {
+    //         $("#cart_detail").html(cartData);
+    //     }
+    // }
 
     function getMemberData() {
         var noTelp = $('#no_telp').val();
@@ -303,7 +336,7 @@
 
                     var subtotal = parseFloat($("#total_input").val());
                     var total = subtotal - (subtotal * diskon);
-                    $("#total_input").val(total);
+                    $("#total_input").text(total);
                 } else {
                     alert(data.message);
                 }
@@ -340,6 +373,9 @@
     });
 
 
+
+
+
     $("#barcode").on("keydown", function(event) {
         if (event.keyCode === 13) { // Check if Enter key is pressed (key code 13)
             var barcode = $(this).val();
@@ -356,7 +392,7 @@
                     console.log("Produk dengan barcode " + barcode + " ditambahkan ke keranjang");
                     $("#cart_detail").html(data);
                     updateSubtotal();
-                    saveCartData(); // Simpan data keranjang belanja ke penyimpanan lokal setelah penambahan produk
+                    //saveCartData(); // Simpan data keranjang belanja ke penyimpanan lokal setelah penambahan produk
 
                     // Bersihkan nilai input barcode setelah dikirim
                     $("#barcode").val("");
@@ -378,44 +414,50 @@
 
 
         // Memulihkan data keranjang belanja dari penyimpanan lokal saat halaman dimuat
-        restoreCartData();
+        //restoreCartData();
 
-        $(".add_cart").click(function() {
-            var product_id = $(this).data("productid");
-            var product_name = $(this).data("productname");
-            var product_primary = $(this).data("productprimary");
-            var product_price = parseFloat($(this).data("price")); // Ubah tipe data harga menjadi float
-            var quantity = parseFloat($('#' + product_id).val()); // Ubah tipe data kuantitas menjadi float
+        $(document).ready(function() {
+            $(document).on('click', '.add_cart', function() {
+                var product_id = $(this).data("productid");
+                var product_name = $(this).data("productname");
+                var product_primary = $(this).data("productprimary");
+                var product_price = parseFloat($(this).data("price"));
+                var quantity = parseFloat($('#' + product_id).val());
 
-            if (!isNaN(quantity) && quantity > 0) { // Periksa apakah kuantitas merupakan angka yang valid dan lebih dari 0
-                $.ajax({
-                    url: "<?php echo base_url(); ?>admin/addBarang",
-                    method: "POST",
-                    data: {
-                        product_id: product_id,
-                        product_name: product_name,
-                        product_primary: product_primary,
-                        product_price: product_price,
-                        quantity: quantity
-                    },
-                    success: function(data) {
-                        if (data === 'false') {
-                            alert("Jumlah yang diinput melebihi stok yang tersedia!");
-                        } else {
-                            $('#barangModal').modal('hide');
-                            window.location.reload();
-                            alert("Produk telah ditambahkan ke keranjang!");
-                            $("#cart_detail").html(data);
-                            $("#" + product_id).val('');
-                            updateSubtotal();
-                            saveCartData(); // Simpan data keranjang belanja ke penyimpanan lokal setelah penambahan produk
+                if (!isNaN(quantity) && quantity > 0) {
+                    $.ajax({
+                        url: "<?php echo base_url(); ?>admin/addBarang",
+                        method: "POST",
+                        data: {
+                            product_id: product_id,
+                            product_name: product_name,
+                            product_primary: product_primary,
+                            product_price: product_price,
+                            quantity: quantity
+                        },
+                        success: function(data) {
+                            if (data === 'false') {
+                                alert("Jumlah yang diinput melebihi stok yang tersedia!");
+                            } else {
+                                $('#barangModal').modal('hide');
+                                //window.location.reload();
+                                alert("Produk telah ditambahkan ke keranjang!");
+                                updateSubtotal();
+                                $("#cart_detail").html(data);
+                                $('#barangTable').DataTable().ajax.reload(null, false);
+                                $("#" + product_id).val('');
+                                //saveCartData();
+                            }
                         }
-                    }
-                });
-            } else {
-                alert("Silakan masukkan jumlah yang valid!");
-            }
+                    });
+                } else {
+                    alert("Silakan masukkan jumlah yang valid!");
+                }
+            });
+
         });
+
+
 
 
         $(document).on('click', '.remove_inventory', function() {
@@ -428,11 +470,11 @@
                         row_id: row_id
                     },
                     success: function(data) {
-                        window.location.reload();
                         alert("Produk dihapus dari keranjang belanja");
                         $("#cart_detail").html(data);
                         updateSubtotal();
-                        saveCartData(); // Simpan data keranjang belanja ke penyimpanan lokal setelah menghapus produk
+                        $('#barangTable').DataTable().ajax.reload(null, false);
+                        //saveCartData(); // Simpan data keranjang belanja ke penyimpanan lokal setelah menghapus produk
                     }
                 });
             } else {
@@ -447,11 +489,11 @@
                 $.ajax({
                     url: "<?= base_url(); ?>/admin/clear_cart",
                     success: function(data) {
-                        window.location.reload();
                         alert("Keranjang telah dikosongkan!");
                         $("#cart_detail").html(data);
                         updateSubtotal();
-                        saveCartData(); // Simpan data keranjang belanja ke penyimpanan lokal setelah mengosongkan keranjang
+                        $('#barangTable').DataTable().ajax.reload(null, false);
+                        //saveCartData(); // Simpan data keranjang belanja ke penyimpanan lokal setelah mengosongkan keranjang
                     }
                 });
             } else {
@@ -461,6 +503,33 @@
 
 
     });
+
+    // // Fungsi untuk mengupdate subtotal saat jumlah berubah
+    // $(document).ready(function() {
+    //     // Fungsi untuk mengupdate subtotal saat jumlah berubah
+    //     function updateSubtotal(rowid, qty) {
+    //         $.ajax({
+    //             url: '<?= base_url('admin/update_subtotal') ?>',
+    //             method: 'POST',
+    //             data: {
+    //                 rowid: rowid,
+    //                 qty: qty
+    //             },
+    //             success: function(response) {
+    //                 // Update the subtotal in the table
+    //                 $('#shoping_cart_table tr[data-rowid="' + rowid + '"] .subtotal').html(response);
+    //                 location.reload();
+    //             }
+    //         });
+    //     }
+
+    //     // Event listener saat jumlah berubah
+    //     $(document).on('change', '.qty', function() {
+    //         var rowid = $(this).data('rowid');
+    //         var quantity = $(this).val();
+    //         updateSubtotal(rowid, quantity);
+    //     });
+    // });
 
     function readURL(input) {
         if (input.files && input.files[0]) {

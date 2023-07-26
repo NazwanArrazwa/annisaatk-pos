@@ -25,7 +25,7 @@ if ($page == 'home') {
                                         Jumlah Berita
                                     <?php endif; ?>
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="counter">
+                                <div class="h5 mb-0 font-weight-bold text-gray-800 counter" id="counter">
                                     <?php if ($this->session->userdata('id_level') == 1 || $this->session->userdata('id_level') == 3) : ?>
                                         <?php echo $jml_barang; ?>
                                     <?php elseif ($this->session->userdata('id_level') == 2) : ?>
@@ -215,6 +215,19 @@ else if ($page == 'kasir') {
         </div>
         <!-- Content Row -->
         <style>
+            /* Make the modal responsive */
+            .modal-dialog {
+                max-width: 90%;
+                margin: 1.75rem auto;
+            }
+
+            /* Adjust the modal body padding for smaller screens */
+            @media (max-width: 576px) {
+                .modal-dialog {
+                    margin: 0.5rem;
+                }
+            }
+
             @media print {
                 #body {
                     display: none;
@@ -272,7 +285,7 @@ else if ($page == 'kasir') {
                                     <div class="input-group">
                                         <!-- <input type="hidden" name="id_penjualan" id="id_penjualan" value="{{ $id_penjualan }}">
                                         <input type="hidden" name="id_barang" id="id_barang"> -->
-                                        <input type="text" class="form-control" name="barcode" id="barcode">
+                                        <input type="text" class="form-control" name="barcode" id="barcode" autocomplete="off" autofocus>
                                         <span class="input-group-btn">
                                             <button id="btnTampilBarang" data-toggle="modal" data-target="#barangModal" class="btn btn-info btn-flat" type="button">
                                                 <i class="fa fa-arrow-right"></i>
@@ -309,7 +322,11 @@ else if ($page == 'kasir') {
                     </div>
                     <div class="row">
                         <div class="col-lg-8">
-                            <div id="bayar" class="tampil-bayar bg-primary">Bayar: </div>
+                            <div class="tampil-bayar bg-primary">
+                                Total:
+                                <span id="total_input"></span>
+                            </div>
+
                             <div class="tampil-terbilang">...</div>
                             <div class="form-group row mt-4">
                                 <label for="input_bayar" class="col-lg-2 control-label">Bayar</label>
@@ -338,12 +355,6 @@ else if ($page == 'kasir') {
                                     <label for="kode_transaksi" class="col-lg-2 control-label">Invoice</label>
                                     <div class="col-lg-8">
                                         <input type="text" id="kode_transaksi" class=" form-control" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="total_input" class="col-lg-2 control-label">Total</label>
-                                    <div class="col-lg-8">
-                                        <input type="text" value="" id="total_input" class=" form-control" readonly>
                                     </div>
                                 </div>
 
@@ -408,7 +419,7 @@ else if ($page == 'kasir') {
                                     <th><i class="fa fa-cog"></i></th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <!-- <tbody>
                                 <?php
                                 $no = 1;
                                 foreach ($barang as $b) {
@@ -425,7 +436,7 @@ else if ($page == 'kasir') {
                                         </td>
                                     </tr>
                                 <?php } ?>
-                            </tbody>
+                            </tbody> -->
                         </table>
                     </div>
                 </div>
@@ -805,8 +816,8 @@ For more information about DataTables, please visit the <a target="_blank" href=
                                     <td><?php echo 'Rp. ' . number_format($tr['total_hrg'], 0, ',', '.'); ?></td>
 
                                     <td>
-                                        <a href=<?php echo base_url("admin/transaksiDetail/") . $tr['kode_transaksi']; ?>><span class="badge badge-success"><i class="fa-solid fa-eye"></i> Detail</span></a> |
-                                        <a href=<?php echo base_url("admin/transaksiHapus/") . $tr['kode_transaksi']; ?> onclick="return confirm('Yakin menghapus Transaksi : <?php echo $tr['kode_transaksi']; ?> ?');" ;><span class="badge badge-danger"><i class="fa-solid fa-trash"></i> Hapus</span></a>
+                                        <a href=<?php echo base_url("admin/transaksiDetail/") . $tr['id_transaksi']; ?>><span class="badge badge-success"><i class="fa-solid fa-eye"></i> Detail</span></a> |
+                                        <a href=<?php echo base_url("admin/transaksiHapus/") . $tr['id_transaksi']; ?> onclick="return confirm('Yakin menghapus Transaksi : <?php echo $tr['kode_transaksi']; ?> ?');" ;><span class="badge badge-danger"><i class="fa-solid fa-trash"></i> Hapus</span></a>
 
                                     </td>
                                 </tr>
@@ -844,16 +855,18 @@ else if ($page == 'transaksiDetail') {
                         <tbody>
                             <tr>
                                 <th>Kode Transaksi</th>
-                                <td><?php echo $detail[0]['kode_transaksi']; ?></td>
+                                <td colspan="3"><?php echo $detail[0]['kode_transaksi']; ?></td>
                             </tr>
                             <tr>
                                 <th>Nama Barang</th>
                                 <th>Harga Jual</th>
+                                <th>Quantity</th>
                             </tr>
                             <?php foreach ($detail as $d) : ?>
                                 <tr>
                                     <td><?php echo $d['nm_barang']; ?></td>
-                                    <td><?php echo $d['hrg_jual']; ?></td>
+                                    <td><?php echo 'Rp. ' . number_format($d['hrg_jual'], 0, ',', '.'); ?></td>
+                                    <td><?php echo $d['jumlah_jual']; ?></td>
                                 </tr>
                             <?php endforeach; ?>
 
@@ -1673,7 +1686,7 @@ else if ($page == 'berita') {
             <h1 class="h3 mb-0 text-gray-800">Berita</h1>
 
             <div class="dropdown">
-                <a href="<?php echo base_url("admin/beritaTambah") ?>" class="btn btn-primary btn-sm "><i class="fa fa-plus"></i> Tambah Pelanggan</a>
+                <a href="<?php echo base_url("admin/beritaTambah") ?>" class="btn btn-primary btn-sm "><i class="fa fa-plus"></i> Tambah Berita</a>
                 <button type="button" class="btn btn-success btn-sm" data-target="#modal" data-toggle="modal">
                     <i class="fa-solid fa-calendar-days"></i> Ubah Periode
                 </button>

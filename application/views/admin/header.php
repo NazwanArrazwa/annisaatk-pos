@@ -35,6 +35,7 @@
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"> Custom styles for this page -->
+
     <link href="<?php echo base_url('assets/'); ?>vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
     <link rel="icon" href="<?php echo base_url('assets/'); ?>images/annisaatk-logo.png" type="image/ico">
