@@ -358,8 +358,6 @@
     });
 
 
-    // Panggil fungsi updateSubtotal untuk menginisialisasi nilai subtotal saat halaman dimuat
-    updateSubtotal();
 
     $(document).ready(function() {
         $("#bayar").text('Bayar : 0'); // Set nilai awal input_bayar menjadi 0
@@ -419,52 +417,96 @@
         loadCartData();
         // Panggil fungsi untuk menghasilkan kode transaksi saat halaman di-load
         generateInvoice();
+        updateSubtotal();
 
 
         // Memulihkan data keranjang belanja dari penyimpanan lokal saat halaman dimuat
         //restoreCartData();
 
-        $(document).ready(function() {
-            $(document).on('click', '.add_cart', function() {
-                var product_id = $(this).data("productid");
-                var product_name = $(this).data("productname");
-                var product_primary = $(this).data("productprimary");
-                var product_price = parseFloat($(this).data("price"));
-                var quantity = parseFloat($('#' + product_id).val());
+        $(document).on('click', '.add_cart', function() {
+            var product_id = $(this).data("productid");
+            var product_name = $(this).data("productname");
+            var product_primary = $(this).data("productprimary");
+            var product_price = $(this).data("price");
+            var quantity = $('#' + product_id).val();
 
-                if (!isNaN(quantity) && quantity > 0) {
-                    $.ajax({
-                        url: "<?php echo base_url(); ?>admin/addBarang",
-                        method: "POST",
-                        data: {
-                            product_id: product_id,
-                            product_name: product_name,
-                            product_primary: product_primary,
-                            product_price: product_price,
-                            quantity: quantity
-                        },
-                        success: function(data) {
-                            if (data === 'false') {
-                                alert("Jumlah yang diinput melebihi stok yang tersedia!");
-                            } else {
-                                $('#barangModal').modal('hide');
-                                //window.location.reload();
-                                alert("Produk telah ditambahkan ke keranjang!");
-                                updateSubtotal();
-                                $("#cart_detail").html(data);
-                                $('#barangTable').DataTable().ajax.reload(null, false);
-                                $("#" + product_id).val('');
-                                //saveCartData();
-                            }
+            if (quantity > 0) {
+                $.ajax({
+                    url: "<?php echo base_url(); ?>admin/addBarang",
+                    method: "POST",
+                    data: {
+                        product_id: product_id,
+                        product_name: product_name,
+                        product_primary: product_primary,
+                        product_price: product_price,
+                        quantity: quantity
+                    },
+                    success: function(data) {
+                        if (data === 'false') {
+                            alert("Jumlah yang diinput melebihi stok yang tersedia!");
+                        } else {
+                            $('#barangModal').modal('hide');
+                            //window.location.reload();
+                            alert("Produk telah ditambahkan ke keranjang!");
+                            updateSubtotal();
+                            $("#cart_detail").html(data);
+                            $('#barangTable').DataTable().ajax.reload(null, false);
+                            $("#" + product_id).val('');
+                            //saveCartData();
                         }
-                    });
-                } else {
-                    alert("Silakan masukkan jumlah yang valid!");
-                }
-            });
-
+                    }
+                });
+            } else {
+                alert("Silakan masukkan jumlah yang valid!");
+            }
         });
 
+
+
+        // // Define a variable to store the previous quantity
+        // var previousQuantity = 0;
+
+        // // Attach a 'focus' event handler to the input field with class 'stock'
+        // $(document).on('focus', '.stock', function() {
+        //     // Store the current quantity in 'previousQuantity' when the input field is focused
+        //     previousQuantity = $(this).val();
+        // });
+        // Attach a 'change' event handler to the input field with class 'stock'
+        $(document).on('change', '.stock', function() {
+            var inputField = $(this);
+            var product_id = inputField.attr('id');
+            var old_quantity = inputField.data('prev-quantity'); // Store the previous quantity in a data attribute
+            var quantity = inputField.val();
+
+            if (quantity > 0) {
+                $.ajax({
+                    url: "<?php echo base_url(); ?>admin/updateKeranjang",
+                    method: "POST",
+                    data: {
+                        product_id: product_id,
+                        quantity: quantity
+                    },
+                    success: function(data) {
+                        if (data === 'false') {
+                            alert("Jumlah yang diinput melebihi stok yang tersedia!");
+                            // Revert the input value to the previous quantity
+                            inputField.val(old_quantity);
+                        } else {
+                            $('#cart_detail').html(data);
+                            updateSubtotal();
+                            $('#barangTable').DataTable().ajax.reload(null, false);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            } else {
+                alert("Silakan masukkan jumlah yang valid!");
+            }
+        });
+
+        // Rest of your code remains unchanged...
 
 
 
