@@ -6,7 +6,7 @@ class M_admin extends CI_Model
     //set nama tabel yang akan kita tampilkan datanya
     var $table = 'tb_barang';
     //set kolom order, kolom pertama saya null untuk kolom edit dan hapus
-    var $column_order = array('barcode', 'nm_barang', 'qty', 'hrg_jual', null);
+    var $column_order = array('barcode', 'nm_barang', 'qty', 'hrg_jual', 'promo', null);
 
     var $column_search = array('barcode', 'nm_barang', 'qty', 'hrg_jual');
     // default order 
@@ -423,6 +423,37 @@ class M_admin extends CI_Model
 
         return $this->db->get('tb_barang')->row();
     }
+
+    // In the model m_admin:
+    public function getProductStock($product_id)
+    {
+        $this->db->select('qty');
+        $this->db->where('barcode', $product_id);
+        $query = $this->db->get('tb_barang');
+        $result = $query->row();
+
+        if ($result) {
+            return $result->qty;
+        } else {
+            return 0;
+        }
+    }
+
+
+    public function updateProductStock($product_id, $quantity_diff)
+    {
+        // Get the current stock quantity for the product from the database
+        $current_stock = $this->getProductStock($product_id);
+
+        // Calculate the new stock quantity after the update
+        $new_stock = $current_stock - $quantity_diff; // Use subtraction instead of addition
+
+        // Update the product's stock in the database
+        $data = array('qty' => $new_stock);
+        $this->db->where('barcode', $product_id);
+        $this->db->update('tb_barang', $data);
+    }
+
 
     public function update_barang_qty($id, $qty)
     {

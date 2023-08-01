@@ -31,62 +31,6 @@ class Admin extends CI_Controller
         }
     }
 
-    //method yang digunakan untuk request data mahasiswa
-    public function barangList()
-    {
-        header('Content-Type: application/json');
-        $list = $this->m_admin->get_datatables();
-        $data = array();
-        $no = 1;
-        //looping data barang
-        foreach ($list as $barang) {
-            $row = array();
-            $row[] = $no++;
-            $row[] = $barang->barcode;
-            $row[] = $barang->nm_barang;
-            $row[] = $barang->hrg_jual;
-            $row[] = $barang->qty;
-            $row[] =  '<input type="text" name="quantity" class="form-control quantity" id="' . $barang->barcode . '">';
-            $row[] =  '<button type="button" name="add_cart" id="add_cart" class="btn btn-success btn-sm add_cart" data-productname="' . $barang->nm_barang . '" data-price="' . $barang->hrg_jual . '" data-productid="' . $barang->barcode . '" data-productprimary="' . $barang->id_barang . '"><i class="fa fa-cart-plus"></i> Tambah</button>';
-            $data[] = $row;
-        }
-        $output = array(
-            "draw" => $this->input->post('draw'),
-            "recordsTotal" => $this->m_admin->count_all(),
-            "recordsFiltered" => $this->m_admin->count_filtered(),
-            "data" => $data,
-        );
-        //output to json format
-        $this->output->set_output(json_encode($output));
-    }
-
-    public function insert_dummy()
-    {
-        //3ribu mahasiswa
-        $jumlah_data = 30000;
-        for ($i = 1; $i <= $jumlah_data; $i++) {
-            $data   =   array(
-                "barcode"      =>  "1" . $i,
-                "nm_barang"    =>  "Nama Barang ke" . $i,
-                "qty"     =>  1,
-                "hrg_jual"     =>  1,
-                "hrg_beli"     =>  1,
-                "promo"     =>  1,
-                "id_supplier"     => 1,
-                "id_kategori"     =>  1,
-                "id_satuan"     =>  1,
-
-            );
-            //insert ke tabel mahasiswa
-            $this->db->insert('tb_barang', $data);
-        }
-        //flashdata untuk pesan success
-        $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible fade show" role="alert">
-        ' . $jumlah_data . ' Data Mahasiswa berhasil disimpan. 
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button></div>');
-    }
 
     //============== DASHBOARD ============//
 
@@ -191,6 +135,43 @@ class Admin extends CI_Controller
         $data['defaultValue'] = $this->m_admin->getDefaultCustomer();
         $this->tampil($data);
     }
+
+    //method yang digunakan untuk request data Barang
+    public function barangList()
+    {
+        header('Content-Type: application/json');
+        $list = $this->m_admin->get_datatables();
+        $data = array();
+        $no = 1;
+        //looping data barang
+        foreach ($list as $barang) {
+            $row = array();
+            $row[] = $no++;
+            $row[] = $barang->barcode;
+            $row[] = $barang->nm_barang;
+            // Cek apakah ada diskon atau tidak
+            if ($barang->promo > 0) {
+                // Hitung harga setelah diskon
+                $harga_setelah_diskon = $barang->hrg_jual - ($barang->hrg_jual * ($barang->promo / 100));
+                $row[] = 'Rp.' . number_format($harga_setelah_diskon, 2);
+            } else {
+                $row[] = 'Rp.' . number_format($barang->hrg_jual, 2);
+            }
+            $row[] = $barang->qty;
+            $row[] =  '<input type="number" min="1" name="quantity" class="form-control quantity" id="' . $barang->barcode . '">';
+            $row[] =  '<button type="button" name="add_cart" id="add_cart" class="btn btn-success btn-sm add_cart" data-productname="' . $barang->nm_barang . '" data-price="' . $barang->hrg_jual . '" data-productid="' . $barang->barcode . '" data-productprimary="' . $barang->id_barang . '"><i class="fa fa-cart-plus"></i> Tambah</button>';
+            $data[] = $row;
+        }
+        $output = array(
+            "draw" => $this->input->post('draw'),
+            "recordsTotal" => $this->m_admin->count_all(),
+            "recordsFiltered" => $this->m_admin->count_filtered(),
+            "data" => $data,
+        );
+        //output to json format
+        $this->output->set_output(json_encode($output));
+    }
+
 
     public function get_pelanggan_data()
     {
@@ -362,6 +343,7 @@ class Admin extends CI_Controller
         echo $this->viewKeranjang();
     }
 
+
     public function viewKeranjang()
     {
         $data['barang'] = $this->m_admin->dtBarang();
@@ -379,8 +361,7 @@ class Admin extends CI_Controller
                 <th>Barcode</th>
                 <th>Nama Barang</th>
                 <th>Harga</th>
-                <th width="15%">Jumlah</th>
-                
+                <th width="15%">Jumlah</th>     
                 <th>Subtotal</th>
                 <th width="15%"><i class="fa fa-cog"></i></th>
             </tr>
@@ -395,7 +376,7 @@ class Admin extends CI_Controller
             <td><span class="badge badge-primary">' . $item["id"] . '</span></td>
             <td>' . $item["name"] . '</td>
             <td>' .  'Rp. ' . number_format($item["price"], 0, ',', '.') . '</td>
-            <td>' . $item["qty"] . '</td>
+            <td><input type="number" min="1" name="quantity" class="form-control stock" id="' . $item['rowid'] . '" value="' . $item["qty"] . '" data-prev-quantity="' . $item["qty"] . '"></td>
             <td>' .  'Rp. ' . number_format($item["subtotal"], 0, ',', '.') . '</td>
             <td><button type="button" name="remove" class="btn btn-danger btn-sm remove_inventory" id="' . $item['rowid'] . '"><i class="fa fa-trash"></i></button></td>
         </tr>
@@ -427,6 +408,54 @@ class Admin extends CI_Controller
         }
         return $output;
     }
+
+    public function updateKeranjang()
+    {
+        $row_id = $this->input->post('product_id');
+        $quantity = $this->input->post('quantity');
+
+        // Dapatkan item keranjang menggunakan 'rowid'
+        $cart_item = $this->cart->get_item($row_id);
+
+        if ($cart_item) {
+            // Dapatkan ID produk dari item keranjang
+            $product_id = $cart_item['id'];
+
+            // Dapatkan jumlah saat ini dalam keranjang dan stok yang tersedia di database
+            $current_quantity = $cart_item['qty'];
+            $available_stock = $this->m_admin->getProductStock($product_id);
+
+            // Hitung jumlah stok baru setelah pembaruan (termasuk jumlah saat ini dalam keranjang)
+            $new_stock = $available_stock + $current_quantity;
+
+            // Periksa apakah jumlah yang diminta melebihi stok yang tersedia (termasuk jumlah saat ini dalam keranjang)
+            if ($quantity > $new_stock) {
+                // Jumlah yang diminta melebihi stok yang tersedia (termasuk jumlah saat ini dalam keranjang)
+                echo 'false';
+                return;
+            }
+
+            // Hitung perbedaan dalam jumlah (perubahan jumlah)
+            $quantity_diff = $quantity - $current_quantity;
+
+            // Perbarui keranjang dengan jumlah baru
+            $this->cart->update(array(
+                'rowid' => $row_id,
+                'qty' => $quantity
+            ));
+
+            // Perbarui stok di database
+            $this->m_admin->updateProductStock($product_id, $quantity_diff);
+
+            // Hasilkan dan kembalikan HTML keranjang yang diperbarui
+            echo $this->viewKeranjang();
+        } else {
+            // Item keranjang tidak ditemukan
+            echo 'false';
+        }
+    }
+
+
 
     // public function update_subtotal()
     // {
@@ -1701,6 +1730,36 @@ class Admin extends CI_Controller
 
         return $result;
     }
+
+
+    public function insert_dummy()
+    {
+        //3ribu mahasiswa
+        $jumlah_data = 30000;
+        for ($i = 1; $i <= $jumlah_data; $i++) {
+            $data   =   array(
+                "barcode"      =>  "1" . $i,
+                "nm_barang"    =>  "Nama Barang ke" . $i,
+                "qty"     =>  1,
+                "hrg_jual"     =>  1,
+                "hrg_beli"     =>  1,
+                "promo"     =>  1,
+                "id_supplier"     => 1,
+                "id_kategori"     =>  1,
+                "id_satuan"     =>  1,
+
+            );
+            //insert ke tabel mahasiswa
+            $this->db->insert('tb_barang', $data);
+        }
+        //flashdata untuk pesan success
+        $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible fade show" role="alert">
+        ' . $jumlah_data . ' Data Mahasiswa berhasil disimpan. 
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button></div>');
+    }
+
 
 
     function tampil($data)

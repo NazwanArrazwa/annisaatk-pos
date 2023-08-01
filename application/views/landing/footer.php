@@ -31,7 +31,7 @@
     const longitude = <?php echo $kordinat->longitude; ?>;
 
     // Membuat peta
-    const map = L.map('map', {
+    const map = L.map('map', { // 
         dragging: true,
         scrollWheelZoom: false,
         touchZoom: false, // Menonaktifkan zoom dengan menyentuh pada layar sentuh
@@ -55,7 +55,7 @@
     // });
 
     // Menambahkan penanda (marker) pada lokasi
-    L.marker([latitude, longitude]).addTo(map);
+    //L.marker([latitude, longitude]).addTo(map);
 </script>
 
 <!-- 
