@@ -92,8 +92,8 @@ class Admin extends CI_Controller
 
     public function index()
     {
-        $data['title']    = 'Admin | Home';
-        $data['page']    = 'home';
+        $data['title']    = 'Admin | Dashboard';
+        $data['page']    = 'dashboard';
         $data['jml_barang']    = $this->m_umum->jumlah_record_tabel('tb_barang');
         $data['jml_berita']    = $this->m_umum->jumlah_record_tabel('tb_berita');
         $data['jml_pelanggan'] = $this->m_umum->jumlah_record_tabel('tb_pelanggan', 'nm_pelanggan', ['Umum']);
@@ -256,18 +256,10 @@ class Admin extends CI_Controller
                 // Tampilkan keranjang belanja yang diperbarui
                 echo $this->viewKeranjang();
             } else {
-                // Jumlah yang diinput melebihi stok yang tersedia
-                echo 'false';
+                echo 'stock';
             }
         } else {
-            // Barang tidak ditemukan, lakukan tindakan yang sesuai, seperti menampilkan pesan error
-            $this->session->set_flashdata('pesan', '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-        Barang Tidak Ditemukan
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
-        </div>');
-            echo $this->viewKeranjang();
+            echo 'false';
         }
     }
 

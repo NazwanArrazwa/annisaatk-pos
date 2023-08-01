@@ -4,6 +4,8 @@ if ($page == 'home') {
 
 ?>
     <!-- ***** Main Banner Area Start ***** -->
+
+    <!-- Loading -->
     <!-- PRE LOADER -->
     <section class="preloader">
         <div class="cart-loader">
@@ -78,10 +80,10 @@ if ($page == 'home') {
                     <div class="col-md-12">
                         <div class="section-heading">
                             <h2>Berita Terbaru</h2>
+
                             <a href="<?php echo base_url('landing/semuaBerita'); ?>">Lihat Semua Berita <i class="fa fa-angle-right"></i></a>
                         </div>
                     </div>
-
                     <?php
                     $counter = 0;
                     if (empty($berita)) {
@@ -102,7 +104,7 @@ if ($page == 'home') {
                                         </div>
                                         <div class="msg">OH!<span class="triangle"></span></div>
                                     </div>
-                                    <h2 class="h1">Maaf! Berita Yang Anda Cari Tidak Ditemukan</h2>
+                                    <h2 class="h1">Tidak Ada Berita Saat Ini</h2>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +118,9 @@ if ($page == 'home') {
                         ?>
                             <div class="col-md-4">
                                 <div class="product-item">
-                                    <a href="<?php echo base_url('landing/berita/') . $b['id_berita']; ?>"><img class="gambarBeritaTerbaru" src="<?php echo base_url('uploads/gambarBerita/'); ?><?= $b['gambar_berita']; ?>"></a>
+                                    <a href="<?php echo base_url('landing/berita/') . $b['id_berita']; ?>">
+                                        <img class="gambarBeritaTerbaru" src="<?php echo base_url('uploads/gambarBerita/'); ?><?= $b['gambar_berita']; ?>">
+                                    </a>
                                     <div class="down-content">
                                         <a href="<?php echo base_url('landing/berita/') . $b['id_berita']; ?>">
                                             <h4><?= $b['judul_berita']; ?></h4>

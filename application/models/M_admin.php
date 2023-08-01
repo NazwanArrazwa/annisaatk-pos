@@ -267,6 +267,7 @@ class M_admin extends CI_Model
         $this->db->from('tb_barang b');
         $this->db->join('tb_kategori k', 'b.id_kategori = k.id_kategori', 'left');
         $this->db->join('tb_satuan s', 's.id_satuan = b.id_satuan', 'left');
+        $this->db->join('tb_supplier sp', 'sp.id_supplier = b.id_supplier', 'left');
         $query = $this->db->get();
         $results = $query->result_array();
 

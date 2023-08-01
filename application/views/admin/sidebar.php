@@ -10,7 +10,7 @@
   </a>
 
   <?php
-  $menu_master0 = array('home');
+  $menu_master0 = array('dashboard');
   $menu_master1 = array('kasir');
   $menu_master2 = array('penjualanBarang', 'laporanPendapatan');
   $menu_master3 = array('riwayatTransaksi', 'transaksiDetail');

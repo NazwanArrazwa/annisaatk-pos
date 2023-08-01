@@ -11,10 +11,10 @@ class Landing extends CI_Controller
     }
     public function index()
     {
+        $data['page']    = 'home';
         $data['berita'] = $this->m_landing->dtBerita();
         $data['toko'] = $this->m_landing->dtProfilToko();
         $data['title']    = 'Home | AnnisaATK';
-        $data['page']    = 'home';
         $data['kordinat'] = $this->m_landing->getCoordinates();
         $this->tampil($data);;
     }
@@ -26,7 +26,7 @@ class Landing extends CI_Controller
         $this->tampil($data);
     }
 
-    public function berita($id)
+    public function berita($id = FALSE)
     {
         $data['b'] = $this->m_landing->dtBeritaDetail($id);
         $data['berita_lainnya'] = $this->m_landing->getBeritaLainnya($id);
