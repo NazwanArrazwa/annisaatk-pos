@@ -61,7 +61,7 @@
 
 
 <!-- Page level custom scripts -->
-<script src="<?php echo base_url('assets/'); ?>js/demo/chart-pie-demo.js"></script>
+<!-- <script src="<?php echo base_url('assets/'); ?>js/demo/chart-pie-demo.js"></script> -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -388,14 +388,22 @@
                     barcode: barcode
                 },
                 success: function(data) {
-                    // Lakukan tindakan setelah berhasil menambahkan ke keranjang
-                    console.log("Produk dengan barcode " + barcode + " ditambahkan ke keranjang");
-                    $("#cart_detail").html(data);
-                    updateSubtotal();
-                    //saveCartData(); // Simpan data keranjang belanja ke penyimpanan lokal setelah penambahan produk
-
-                    // Bersihkan nilai input barcode setelah dikirim
-                    $("#barcode").val("");
+                    if (data === 'false') {
+                        alert("Data Barcode Barang Tidak Ditemukan");
+                        $("#barcode").val("");
+                    } else if (data === 'stock') {
+                        alert("Stock Barang Habis");
+                        $("#barcode").val("");
+                    } else {
+                        alert("Barang Berhasil Dimasukkan Ke Keranjang");
+                        // Lakukan tindakan setelah berhasil menambahkan ke keranjang
+                        $("#cart_detail").html(data);
+                        updateSubtotal();
+                        $('#barangTable').DataTable().ajax.reload(null, false);
+                        //saveCartData(); // Simpan data keranjang belanja ke penyimpanan lokal setelah penambahan produk
+                        // Bersihkan nilai input barcode setelah dikirim
+                        $("#barcode").val("");
+                    }
                 },
                 error: function(xhr, status, error) {
                     // Lakukan tindakan untuk penanganan error
@@ -560,6 +568,10 @@
                 "groups": ["styles"]
             },
         ],
+        autoGrow_onStartup: true,
+        enterMode: CKEDITOR.ENTER_BR,
+        FullPage: false,
+        autoParagraf: false,
         // Tools Yang di remove
         removeButtons: 'Format,Strike,Subscript,Superscript,Anchor,Styles,Specialchar,PasteFromWord'
     });
@@ -645,6 +657,8 @@
         });
     }
 
+
+
     function setChart(accept) {
         var ctx = document.getElementById("myAreaChart");
         var myLineChart = new Chart(ctx, {
@@ -694,7 +708,7 @@
                         ticks: {
                             maxTicksLimit: 5,
                             padding: 10,
-                            // Include a dollar sign in the ticks
+                            // Include a rupiah sign in the ticks
                             callback: function(value, index, values) {
                                 return 'Rp. ' + number_format(value);
                             }

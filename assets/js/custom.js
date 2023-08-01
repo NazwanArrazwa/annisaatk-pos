@@ -311,7 +311,6 @@
 		$('.preloader').fadeOut(700);
 	  });
 	});
-
 	
   }(jQuery));
   

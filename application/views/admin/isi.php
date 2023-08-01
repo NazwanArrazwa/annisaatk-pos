@@ -1,6 +1,6 @@
 <?php
 //==================================== HOME ====================================
-if ($page == 'home') {
+if ($page == 'dashboard') {
 
 ?>
     <!-- Begin Page Content -->
@@ -216,7 +216,7 @@ else if ($page == 'kasir') {
         <!-- Content Row -->
         <style>
             /* Make the modal responsive */
-            .modal-dialog {
+            .modal-dialog modal-xl {
                 max-width: 90%;
                 margin: 1.75rem auto;
             }
@@ -277,25 +277,22 @@ else if ($page == 'kasir') {
                 <div class="box">
                     <div class="box-body">
 
-                        <form class="form-barang">
-
-                            <div class="form-group row">
-                                <label for="barcode" class="col-lg-2">Barcode</label>
-                                <div class="col-lg-5">
-                                    <div class="input-group">
-                                        <!-- <input type="hidden" name="id_penjualan" id="id_penjualan" value="{{ $id_penjualan }}">
+                        <div class="form-group row">
+                            <label for="barcode" class="col-lg-2">Barcode</label>
+                            <div class="col-lg-5">
+                                <div class="input-group">
+                                    <!-- <input type="hidden" name="id_penjualan" id="id_penjualan" value="{{ $id_penjualan }}">
                                         <input type="hidden" name="id_barang" id="id_barang"> -->
-                                        <input type="text" class="form-control" name="barcode" id="barcode" autocomplete="off" autofocus>
-                                        <span class="input-group-btn">
-                                            <button id="btnTampilBarang" data-toggle="modal" data-target="#barangModal" class="btn btn-info btn-flat" type="button">
-                                                <i class="fa fa-arrow-right"></i>
-                                            </button>
+                                    <input type="text" class="form-control" name="barcode" id="barcode" autocomplete="off" autofocus>
+                                    <span class="input-group-btn">
+                                        <button id="btnTampilBarang" data-toggle="modal" data-target="#barangModal" class="btn btn-info btn-flat" type="button">
+                                            <i class="fa fa-arrow-right"></i>
+                                        </button>
 
-                                        </span>
-                                    </div>
+                                    </span>
                                 </div>
                             </div>
-                        </form>
+                        </div>
 
                         <!-- <table id="shoping_cart_table" class="table table-stiped table-bordered table-penjualan">
                             <thead>
@@ -942,6 +939,7 @@ else if ($page == 'barang') {
                                 <th>Kategori</th>
                                 <th>Satuan</th>
                                 <th>Promo</th>
+                                <th>Supplier</th>
                                 <th>Aksi</th>
 
                             </tr>
@@ -961,6 +959,7 @@ else if ($page == 'barang') {
                                     <td><?php echo $b['nm_kategori'] ?></td>
                                     <td><?php echo $b['nm_satuan'] ?></td>
                                     <td><?php echo $b['promo'], '%' ?></td>
+                                    <td><?php echo $b['nm_supplier']; ?></td>
                                     <td>
                                         <a href=<?php echo base_url("admin/barangEdit/") . $b['id_barang']; ?>><span class="badge badge-success">Edit</span></a> |
                                         <a href=<?php echo base_url("admin/barangHapus/") . $b['id_barang']; ?> onclick="return confirm('Yakin menghapus Barang : <?php echo $b['nm_barang']; ?> ?');" ;><span class="badge badge-danger">Hapus</span></a>
