@@ -1528,8 +1528,6 @@ class Admin extends CI_Controller
         $this->form_validation->set_rules('nm_toko', 'Nama Toko', 'required', array('required' => '%s harus diisi.'));
         $this->form_validation->set_rules('no_telp', 'Nomor Telepon', 'required', array('required' => '%s harus diisi.'));
         $this->form_validation->set_rules('alamat', 'Alamat', 'required', array('required' => '%s harus diisi.'));
-        $this->form_validation->set_rules('instagram', 'Instagram', 'required', array('required' => '%s harus diisi.'));
-        $this->form_validation->set_rules('facebook', 'Facebook', 'required', array('required' => '%s harus diisi.'));
         $this->form_validation->set_rules('longitude', 'X', 'required', array('required' => '%s harus diisi.'));
         $this->form_validation->set_rules('latitude', 'Y', 'required', array('required' => '%s harus diisi.'));
         if ($this->form_validation->run() === FALSE) {

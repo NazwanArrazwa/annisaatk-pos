@@ -617,8 +617,6 @@ class M_admin extends CI_Model
             'nm_toko' => $this->input->post('nm_toko'),
             'no_telp' => $this->input->post('no_telp'),
             'alamat' => $this->input->post('alamat'),
-            'facebook' => $this->input->post('facebook'),
-            'instagram' => $this->input->post('instagram'),
             'longitude' => $this->input->post('longitude'),
             'latitude' => $this->input->post('latitude'),
         );
