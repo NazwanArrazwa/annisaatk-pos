@@ -218,8 +218,9 @@
                 if (result.status === 200) {
                     $('#modal_struck').modal('hide');
                     alert("Transaksi Berhasil");
+                    window.location.reload();
                     //localStorage.removeItem("cartData");
-                    DataTable().ajax.reload();
+                    //window.onload();
                 } else {
                     alert("Terjadi kesalahan dalam transaksi");
                 }

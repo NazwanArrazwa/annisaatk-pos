@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 10, 2023 at 02:06 PM
+-- Generation Time: Aug 02, 2023 at 11:32 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -20,19 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `annisaatk`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tb_bank`
---
-
-CREATE TABLE `tb_bank` (
-  `id_rek` int(11) NOT NULL,
-  `nm_bank` char(100) NOT NULL,
-  `rekening` char(100) NOT NULL,
-  `nm_pemilik_rek` char(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -58,13 +45,10 @@ CREATE TABLE `tb_barang` (
 --
 
 INSERT INTO `tb_barang` (`id_barang`, `barcode`, `nm_barang`, `qty`, `hrg_jual`, `hrg_beli`, `promo`, `id_supplier`, `id_kategori`, `id_satuan`) VALUES
-(1, '01', 'pensil', 995, '3000', '1000', 0, NULL, 1, 1),
-(2, '02', 'Kotak Pensil', 190, '12000', '10000', 0, NULL, 1, 1),
-(3, '03', 'tipex', 282, '12800', '10000', 10, NULL, 1, 1),
-(4, '8996001321522', 'Permen Kiss', 993, '20000', '10000', 0, NULL, 1, 1),
-(5, '05', 'Kipas Angin', 234, '500000', '100000', 0, NULL, 1, 1),
-(6, '061', 'Permen Mentos', 986, '15000', '10000', 0, NULL, 1, 1),
-(7, '8996001321511', 'Lampu Neon', 996, '3000', '1000', 0, NULL, 1, 1);
+(1, '03', 'Rak Sepatu', 0, '20000', '10000', 13, 2, 1, 1),
+(2, '099320180921', 'Kotak Pensil', 999, '40000', '20000', 0, 1, 1, 1),
+(3, '055', 'USB', 44, '10000', '9000', 0, 2, 1, 1),
+(4, '0823017', 'Surya 12', 100, '20000', '12000', 0, 1, 4, 1);
 
 -- --------------------------------------------------------
 
@@ -86,9 +70,11 @@ CREATE TABLE `tb_berita` (
 --
 
 INSERT INTO `tb_berita` (`id_berita`, `judul_berita`, `isi_berita`, `gambar_berita`, `nama_pengirim`, `tanggal`) VALUES
-(1, 'Toko ATK Modern \"AnnisaATK\"', '<p>Dunia perbelanjaan ATK (Alat Tulis Kantor) semakin menggeliat dengan hadirnya toko ATK modern terbaru, &quot;AnnisaATK&quot;, yang memberikan pengalaman belanja yang inovatif dan inspiratif bagi para pelanggan.&nbsp;</p>\r\n', 'berita_1.jpg', 'admin', '2023-06-12 22:44:55'),
-(2, 'Grand Opening toko Annisa ATK di Banjarmasin', '<p>Nantikan GrandOpening dengan nama toko Annisa ATK Banjarmasin dan di toko tersebut nantinya akan menjual beberapa Alat Tulis Kantor (ATK) dengan harga yang terjangkau, Toko ATK ini berada di Komplek Grand Mahantas, Blok F, No.71, Kelurahan Pemurus Dalam, Banjarmasin Selatan.</p>\r\n\r\n<p>Annisa ATK Banjarmasin&nbsp; adalah solusi untuk memberi kemudahan bagi masyarakat dalam memenuhi hasrat konsumtifnya, terutama yang membutuhkan penunjang ATK dan kebutuhan dibidang pendidikan.</p>\r\n', 'berita_2_20230708.png', 'admin', '2023-07-08 00:26:09'),
-(6, 'Mengantongi Laba pada Alat Tulis Kantor', '<p>Alat tulis kantor (ATK) merupakan perlengkapan yang sangat dibutuhkan demi berlangsungnya operasional kantor. Selain instansi pemerintah, kantor-kantor swasta dan sekolah juga sangat membutuhkan ATK. Di tengah tingginya kebutuhan itu, prospek bisnis ATK sangat menjanjikan. Tak heran, kini toko ATK gampang sekali dijumpai di berbagai lokasi.<br />\r\n<br />\r\nMeski sudah dikerumuni banyak pemain, toh toko ATK tetap ramai dikunjungi pembeli. Itulah yang mendorong toko Annisa ATK Banjarmasin berani menawarkan kemitraan toko ATK.</p>\r\n', 'berita_6.jpg', 'admin', '2023-07-08 01:58:36');
+(1, 'Toko ATK Modern \"AnnisaATK\"', '<p>Dunia perbelanjaan ATK (Alat Tulis Kantor) semakin menggeliat dengan hadirnya toko ATK modern terbaru, &quot;AnnisaATK&quot;, yang memberikan pengalaman belanja yang inovatif dan inspiratif bagi para pelanggan.&nbsp;</p>\r\n', 'berita_1_220053.jpg', 'admin', '2023-07-10 14:00:53'),
+(2, 'Grand Opening toko Annisa ATK di Banjarmasin', '<p>Nantikan GrandOpening dengan nama toko Annisa ATK Banjarmasin dan di toko tersebut nantinya akan menjual beberapa Alat Tulis Kantor (ATK) dengan harga yang terjangkau, Toko ATK ini berada di Komplek Grand Mahantas, Blok F, No.71, Kelurahan Pemurus Dalam, Banjarmasin Selatan.</p>\r\n\r\n<p>Annisa ATK Banjarmasin&nbsp; adalah solusi untuk memberi kemudahan bagi masyarakat dalam memenuhi hasrat konsumtifnya, terutama yang membutuhkan penunjang ATK dan kebutuhan dibidang pendidikan.</p>\r\n', 'berita_2_165328.png', 'admin', '2023-07-11 08:53:28'),
+(6, 'Mengantongi Laba pada Alat Tulis Kantor', '<p>Alat tulis kantor (ATK) merupakan perlengkapan yang sangat dibutuhkan demi berlangsungnya operasional kantor. Selain instansi pemerintah, kantor-kantor swasta dan sekolah juga sangat membutuhkan ATK. Di tengah tingginya kebutuhan itu, prospek bisnis ATK sangat menjanjikan. Tak heran, kini toko ATK gampang sekali dijumpai di berbagai lokasi.<br />\r\n<br />\r\nMeski sudah dikerumuni banyak pemain, toh toko ATK tetap ramai dikunjungi pembeli. Itulah yang mendorong toko Annisa ATK Banjarmasin berani menawarkan kemitraan toko ATK.</p>\r\n', 'berita_6_112252.jpg', 'admin', '2023-07-18 03:22:52'),
+(10, 'fhaoifhwaofigaofgiawogif', '<p>afhwaugwaoufaoufgawo</p>\r\n', 'berita_101690789170.jpg', 'admin', '2023-07-31 07:39:30'),
+(11, 'Perpustakaan Poliban', 'Ini adalah deskripsi Perpustakaan poliban', 'berita_111690858158.jpg', 'admin', '2023-08-01 02:49:18');
 
 -- --------------------------------------------------------
 
@@ -99,7 +85,7 @@ INSERT INTO `tb_berita` (`id_berita`, `judul_berita`, `isi_berita`, `gambar_beri
 CREATE TABLE `tb_config` (
   `id_config` int(11) NOT NULL,
   `email` char(100) NOT NULL,
-  `pass` char(255) NOT NULL
+  `pass` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -191,7 +177,8 @@ CREATE TABLE `tb_supplier` (
 --
 
 INSERT INTO `tb_supplier` (`id_supplier`, `nm_supplier`, `no_telp`, `alamat`) VALUES
-(1, 'Junet', '089692815667', 'Jl Kenangan 12');
+(1, 'Junet', '089692815667', 'Jl Kenangan 12'),
+(2, 'Habibie', '0877777771', 'Jl PurnaSakti No 7');
 
 -- --------------------------------------------------------
 
@@ -205,8 +192,6 @@ CREATE TABLE `tb_toko` (
   `no_telp` char(50) NOT NULL,
   `alamat` char(50) NOT NULL,
   `email` char(50) NOT NULL,
-  `instagram` char(50) NOT NULL,
-  `facebook` char(50) NOT NULL,
   `longitude` char(100) NOT NULL,
   `latitude` char(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -215,8 +200,8 @@ CREATE TABLE `tb_toko` (
 -- Dumping data for table `tb_toko`
 --
 
-INSERT INTO `tb_toko` (`id_toko`, `nm_toko`, `no_telp`, `alamat`, `email`, `instagram`, `facebook`, `longitude`, `latitude`) VALUES
-(1, 'Annisa ATK', '085752687248', 'Banjarmasin, Kalimantan Selatan', 'annisaatkbjm@gmail.com', '@Annisaatkbjm', 'Annisa_ATK_BJM', '114.58205904593228', '-3.294986967885569');
+INSERT INTO `tb_toko` (`id_toko`, `nm_toko`, `no_telp`, `alamat`, `email`, `longitude`, `latitude`) VALUES
+(1, 'Annisa ATK', '085752687248', 'Banjarmasin, Kalimantan Selatan', 'annisaatkbjm@gmail.com', '114.6125535495408', '-3.358965654981691');
 
 -- --------------------------------------------------------
 
@@ -241,8 +226,18 @@ CREATE TABLE `tb_transaksi` (
 --
 
 INSERT INTO `tb_transaksi` (`id_transaksi`, `kode_transaksi`, `kasir`, `waktu`, `jumlah_bayar`, `total_hrg`, `total_brg`, `id_pelanggan`, `diskon`) VALUES
-(1, '0001-10072023', 1, '2023-07-10 19:38:09', '3000', '3000', '1', 2, '1'),
-(2, '0002-10072023', 1, '2023-07-10 19:46:01', '3000', '3000', '1', 2, '1');
+(1, '0001-11072023', 1, '2023-07-11 16:26:46', '15000', '15000', '2', 1, '0'),
+(2, '0001-24072023', 1, '2023-07-24 15:28:04', '50000', '48000', '4', 1, '0'),
+(3, '0002-24072023', 1, '2023-07-24 15:28:54', '10000', '9000', '3', 1, '0'),
+(4, '0003-24072023', 1, '2023-07-24 20:33:49', '50000', '46000', '4', 1, '0'),
+(5, '0001-25072023', 1, '2023-07-25 10:03:42', '100000', '6000', '2', 1, '0'),
+(6, '0001-26072023', 1, '2023-07-26 13:57:32', '40000', '40000', '2', 1, '0'),
+(7, '0002-26072023', 1, '2023-07-26 13:58:19', '20000', '20000', '1', 1, '0'),
+(8, '0001-02082023', 1, '2023-08-02 14:16:41', '40000', '40000', '1', 1, '0'),
+(9, '0002-02082023', 1, '2023-08-02 14:18:12', '80000', '80000', '2', 1, '0'),
+(10, '0003-02082023', 1, '2023-08-02 14:20:53', '40000', '40000', '1', 1, '0'),
+(11, '0003-02082023', 1, '2023-08-02 14:21:38', '40000', '40000', '1', 1, '0'),
+(12, '0004-02082023', 1, '2023-08-02 17:29:20', '300000', '40000', '1', 1, '0');
 
 -- --------------------------------------------------------
 
@@ -255,16 +250,30 @@ CREATE TABLE `tb_transaksi_detail` (
   `id_transaksi` int(11) NOT NULL,
   `id_barang` int(11) NOT NULL,
   `jumlah_jual` char(100) NOT NULL,
-  `hrg_jual` char(100) NOT NULL
+  `hrg_jual` char(100) NOT NULL,
+  `last_qty` char(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tb_transaksi_detail`
 --
 
-INSERT INTO `tb_transaksi_detail` (`id_transaksi_detail`, `id_transaksi`, `id_barang`, `jumlah_jual`, `hrg_jual`) VALUES
-(1, 1, 1, '1', '3000'),
-(2, 2, 1, '1', '3000');
+INSERT INTO `tb_transaksi_detail` (`id_transaksi_detail`, `id_transaksi`, `id_barang`, `jumlah_jual`, `hrg_jual`, `last_qty`) VALUES
+(1, 1, 1, '1', '3000', '994'),
+(2, 1, 2, '1', '12000', '189'),
+(3, 2, 6, '3', '15000', '983'),
+(4, 2, 1, '1', '3000', '993'),
+(5, 3, 1, '3', '3000', '990'),
+(6, 4, 1, '2', '3000', '1011'),
+(7, 4, 4, '2', '20000', '1014'),
+(8, 5, 1, '2', '3000', '1009'),
+(9, 6, 1, '2', '20000', '998'),
+(10, 7, 1, '1', '20000', '997'),
+(11, 8, 2, '1', '40000', '1004'),
+(12, 9, 2, '2', '40000', '1002'),
+(13, 10, 2, '1', '40000', '1001'),
+(14, 11, 2, '1', '40000', '1000'),
+(15, 12, 2, '1', '40000', '999');
 
 -- --------------------------------------------------------
 
@@ -295,22 +304,20 @@ INSERT INTO `tb_user` (`username`, `email`, `password`, `id_level`, `token`, `to
 --
 
 --
--- Indexes for table `tb_bank`
---
-ALTER TABLE `tb_bank`
-  ADD PRIMARY KEY (`id_rek`);
-
---
 -- Indexes for table `tb_barang`
 --
 ALTER TABLE `tb_barang`
-  ADD PRIMARY KEY (`id_barang`);
+  ADD PRIMARY KEY (`id_barang`),
+  ADD KEY `id_supplier` (`id_supplier`),
+  ADD KEY `id_kategori` (`id_kategori`),
+  ADD KEY `id_satuan` (`id_satuan`);
 
 --
 -- Indexes for table `tb_berita`
 --
 ALTER TABLE `tb_berita`
-  ADD PRIMARY KEY (`id_berita`);
+  ADD PRIMARY KEY (`id_berita`),
+  ADD KEY `nama_pengirim` (`nama_pengirim`);
 
 --
 -- Indexes for table `tb_config`
@@ -360,7 +367,9 @@ ALTER TABLE `tb_transaksi`
 -- Indexes for table `tb_transaksi_detail`
 --
 ALTER TABLE `tb_transaksi_detail`
-  ADD PRIMARY KEY (`id_transaksi_detail`);
+  ADD PRIMARY KEY (`id_transaksi_detail`),
+  ADD KEY `id_transaksi` (`id_transaksi`),
+  ADD KEY `id_barang` (`id_barang`);
 
 --
 -- Indexes for table `tb_user`
@@ -373,22 +382,16 @@ ALTER TABLE `tb_user`
 --
 
 --
--- AUTO_INCREMENT for table `tb_bank`
---
-ALTER TABLE `tb_bank`
-  MODIFY `id_rek` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `tb_barang`
 --
 ALTER TABLE `tb_barang`
-  MODIFY `id_barang` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_barang` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tb_berita`
 --
 ALTER TABLE `tb_berita`
-  MODIFY `id_berita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_berita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `tb_kategori`
@@ -412,7 +415,7 @@ ALTER TABLE `tb_satuan`
 -- AUTO_INCREMENT for table `tb_supplier`
 --
 ALTER TABLE `tb_supplier`
-  MODIFY `id_supplier` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_supplier` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tb_toko`
@@ -424,13 +427,25 @@ ALTER TABLE `tb_toko`
 -- AUTO_INCREMENT for table `tb_transaksi`
 --
 ALTER TABLE `tb_transaksi`
-  MODIFY `id_transaksi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_transaksi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `tb_transaksi_detail`
 --
 ALTER TABLE `tb_transaksi_detail`
-  MODIFY `id_transaksi_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_transaksi_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `tb_barang`
+--
+ALTER TABLE `tb_barang`
+  ADD CONSTRAINT `tb_barang_ibfk_1` FOREIGN KEY (`id_kategori`) REFERENCES `tb_kategori` (`id_kategori`),
+  ADD CONSTRAINT `tb_barang_ibfk_2` FOREIGN KEY (`id_satuan`) REFERENCES `tb_satuan` (`id_satuan`),
+  ADD CONSTRAINT `tb_barang_ibfk_3` FOREIGN KEY (`id_supplier`) REFERENCES `tb_supplier` (`id_supplier`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
