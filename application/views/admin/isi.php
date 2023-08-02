@@ -855,19 +855,6 @@ else if ($page == 'transaksiDetail') {
                                 <td colspan="3"><?php echo $detail[0]['kode_transaksi']; ?></td>
                             </tr>
                             <tr>
-                                <th>Nama Barang</th>
-                                <th>Harga Jual</th>
-                                <th>Quantity</th>
-                            </tr>
-                            <?php foreach ($detail as $d) : ?>
-                                <tr>
-                                    <td><?php echo $d['nm_barang']; ?></td>
-                                    <td><?php echo 'Rp. ' . number_format($d['hrg_jual'], 0, ',', '.'); ?></td>
-                                    <td><?php echo $d['jumlah_jual']; ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-
-                            <tr>
                                 <th>Total Harga</th>
                                 <td colspan="3"><?php echo 'Rp. ' . number_format($detail[0]['total_hrg'], 0, ',', '.'); ?></td>
                             </tr>
@@ -885,6 +872,19 @@ else if ($page == 'transaksiDetail') {
                                 <td colspan="3"><?php echo $detail[0]['username'];
                                                 ?></td>
                             </tr>
+                            <tr>
+                                <th>Nama Barang</th>
+                                <th>Harga Jual</th>
+                                <th>Quantity</th>
+                            </tr>
+                            <?php foreach ($detail as $d) : ?>
+                                <tr>
+                                    <td><?php echo $d['nm_barang']; ?></td>
+                                    <td><?php echo 'Rp. ' . number_format($d['hrg_jual'], 0, ',', '.'); ?></td>
+                                    <td><?php echo $d['jumlah_jual']; ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+
                         </tbody>
                     </table>
                 </div>
@@ -2051,21 +2051,6 @@ else if ($page == 'profilToko') {
                     <div id="alamat"><?php echo $t['alamat'] ?></div>
                 </div>
                 <div class="col-5 mb-3">
-                    Instagram
-                </div>
-                <div class="col-7 d-flex">
-                    <div class="pr-2">:</div>
-                    <div id="instagram"><?php echo $t['instagram'] ?></div>
-                </div>
-                <div class="col-5 mb-3">
-                    Facebook
-                </div>
-                <div class="col-7 d-flex">
-                    <div class="pr-2">:</div>
-                    <div id="facebook"><?php echo $t['facebook'] ?></div>
-                </div>
-
-                <div class="col-5 mb-3">
                     X
                 </div>
                 <div class="col-7 d-flex">
@@ -2123,17 +2108,6 @@ else if ($page == 'profilTokoEdit') {
                             <input type="text" name="alamat" placeholder="Masukkan Alamat..." value="<?php echo set_value('alamat', $t['alamat']); ?>" class="form-control">
                             <span class="badge badge-danger"><?php echo strip_tags(form_error('alamat')); ?></span>
                         </div>
-                        <div class="form-group">
-                            <label>Instagram</label>
-                            <input type="text" name="instagram" placeholder="Masukkan Instagram..." value="<?php echo set_value('instagram', $t['instagram']); ?>" class="form-control">
-                            <span class="badge badge-danger"><?php echo strip_tags(form_error('instagram')); ?></span>
-                        </div>
-                        <div class="form-group">
-                            <label>Facebook</label>
-                            <input type="text" name="facebook" placeholder="Masukkan Facebook..." value="<?php echo set_value('facebook', $t['facebook']); ?>" class="form-control">
-                            <span class="badge badge-danger"><?php echo strip_tags(form_error('facebook')); ?></span>
-                        </div>
-
                         <div class="form-group">
                             <label>Lintang / Y</label>
                             <input type="text" name="latitude" placeholder="Masukkan Y pada Maps..." value="<?php echo set_value('latitude', $t['latitude']); ?>" class="form-control">
