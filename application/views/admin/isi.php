@@ -5,26 +5,26 @@ if ($page == 'dashboard') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
-
-        <!-- Notifikasi Barang Hampir Habis atau Habis -->
-        <?php if ($barang_habis) : ?>
-            <div class="row">
-                <div class="col">
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <strong>Perhatian!</strong> Beberapa barang hampir habis atau habis:
-                        <ul>
-                            <?php foreach ($barang_habis as $barang) : ?>
-                                <li><?= $barang->nm_barang ?> (<?= $barang->qty == 0 ? 'Habis' : 'Hampir habis' ?>)</li>
-                            <?php endforeach; ?>
-                        </ul>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+        <?php if ($this->session->userdata('id_level') == 1) : ?>
+            <!-- Notifikasi Barang Hampir Habis atau Habis -->
+            <?php if ($barang_habis) : ?>
+                <div class="row">
+                    <div class="col">
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>Perhatian!</strong> Beberapa barang hampir habis atau habis:
+                            <ul>
+                                <?php foreach ($barang_habis as $barang) : ?>
+                                    <li><?= $barang->nm_barang ?> (<?= $barang->qty == 0 ? 'Habis' : 'Hampir habis' ?>)</li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
         <?php endif; ?>
-
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
             <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
@@ -158,7 +158,7 @@ if ($page == 'dashboard') {
         <?php endif; ?>
 
         <!-- Content Row -->
-        <?php if ($this->session->userdata('id_level') == 1 || $this->session->userdata('id_level') == 3) : ?>
+        <?php if ($this->session->userdata('id_level') == 1) : ?>
             <div class="row">
                 <div class="col">
                     <div class="card shadow mb-4">
@@ -946,8 +946,27 @@ else if ($page == 'barang') {
     <!-- Begin Page Content -->
     <div class="container-fluid">
 
+        <?php if ($this->session->userdata('id_level') == 1) : ?>
+            <!-- Notifikasi Barang Hampir Habis atau Habis -->
+            <?php if ($barang_habis) : ?>
+                <div class="row">
+                    <div class="col">
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>Perhatian!</strong> Beberapa barang hampir habis atau habis:
+                            <ul>
+                                <?php foreach ($barang_habis as $b) : ?>
+                                    <li><?= $b->nm_barang ?> (<?= $b->qty == 0 ? 'Habis' : 'Hampir habis' ?>)</li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
         <!-- Page Heading -->
-
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-4 text-gray-800">Barang</h1>
             <a href="<?php echo base_url("admin/barangTambah") ?>" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-plus"></i> Tambah Barang</a>

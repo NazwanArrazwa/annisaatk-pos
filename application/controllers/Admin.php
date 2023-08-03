@@ -1019,6 +1019,7 @@ class Admin extends CI_Controller
         $data['title']    = 'Admin | Barang';
         $data['page']    = 'barang';
         $data['barang'] = $this->m_admin->dtBarang();
+        $data['barang_habis'] = $this->m_admin->get_barang_habis(20); // Ganti '10' sesuai kebutuhan
 
         $this->tampil($data);
     }
