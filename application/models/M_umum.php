@@ -47,6 +47,16 @@ class M_umum extends CI_Model
         $query = $this->db->get();
         return $query->row_array();
     }
+
+    public function cari_barcode($tabel, $namafield, $isifield)
+    {
+        $this->db->select('*');
+        $this->db->from($tabel);
+        $this->db->where($namafield, $isifield);
+        $query = $this->db->get();
+        return $query->row();
+    }
+
     function cek_login()    //Cek apakah user pass ada
     {
         $username = $this->input->post('username');

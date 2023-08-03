@@ -50,6 +50,14 @@ class Admin extends CI_Controller
         $this->tampil($data);
     }
 
+    public function barcode($id_barang)
+    {
+        $data['title']    = 'Admin | Barcode';
+        $data['page']    = 'tampilBarcode';
+        $data['barcode'] = $this->m_umum->cari_barcode('tb_barang', 'id_barang', $id_barang);
+        $this->tampil($data);
+    }
+
     public function penjualanTahunan()
     {
         $this->load->model('m_admin');

@@ -1006,7 +1006,11 @@ else if ($page == 'barang') {
                             foreach ($barang as $b) { ?>
                                 <tr>
                                     <td><?php echo $no++; ?></td>
-                                    <td><span class="badge badge-primary"><?php echo $b['barcode'] ?></span></td>
+                                    <td>
+                                        <span class="badge badge-primary mb-2"><?php echo $b['barcode'] ?></span> <br>
+                                        <a href="<?php echo base_url('admin/barcode/') . $b['id_barang']; ?>" class="border border-primary p-1"><i class="fa fa-barcode"></i></a>
+                                    </td>
+
                                     <td><?php echo $b['nm_barang'] ?></td>
                                     <td><?php echo $b['qty'] ?></td>
                                     <td><?php echo  'Rp. ' . number_format($b['hrg_jual'], 0, ',', '.') ?></td>
@@ -1035,187 +1039,230 @@ else if ($page == 'barang') {
 
     </div>
     <!-- End of Main Content -->
+
+
 <?php
 }
 
-//==================================== Barang Tambah ====================================
-else if ($page == 'barangTambah') {
+//==================================== Barcode ====================================
+else if ($page == 'tampilBarcode') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
+
         <!-- Page Heading -->
-        <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Tambah Barang</h1>
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-4 text-gray-800">Tampil Barcode</h1>
+
         </div>
+        <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+        For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p> -->
+        <?php echo $this->session->flashdata('pesan'); ?>
 
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="card shadow">
-                <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
+                <div class="card-header"><strong>Detail Barcode</strong></div>
                 <div class="card-body">
-                    <form method="POST" action="<?php echo base_url("admin/barangTambah") ?>">
-                        <div class="form-row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="kategori" class="form-label">Pilih Supplier</label>
-                                    <?php echo form_dropdown('id_supplier', $ddsupplier, set_value('id_supplier'), 'class="form-control"'); ?>
-                                    <span class="badge badge-warning"><?php echo strip_tags(form_error('id_supplier')); ?></span>
+                    <div class="form-group">
+                        <label>Barcode</label>
+                        <br>
+                        <?php
+                        $generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
+                        echo '<img src="data:image/png;base64,' . base64_encode($generator->getBarcode($barcode->barcode, $generator::TYPE_CODE_128)) . '">'; ?>
+                        <br>
+                        <?= $barcode->barcode; ?>
+                    </div>
 
+                    <div class="float-right">
+                        <a href="<?php echo base_url("admin/barang") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+        <?php
+    }
+
+    //==================================== Barang Tambah ====================================
+    else if ($page == 'barangTambah') {
+        ?>
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-3">
+                    <h1 class="h3 mb-0 text-gray-800">Tambah Barang</h1>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="card shadow">
+                        <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
+                        <div class="card-body">
+                            <form method="POST" action="<?php echo base_url("admin/barangTambah") ?>">
+                                <div class="form-row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="kategori" class="form-label">Pilih Supplier</label>
+                                            <?php echo form_dropdown('id_supplier', $ddsupplier, set_value('id_supplier'), 'class="form-control"'); ?>
+                                            <span class="badge badge-warning"><?php echo strip_tags(form_error('id_supplier')); ?></span>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Barcode</label>
+                                            <input type="text" name="barcode" placeholder="Masukkan Barcode..." value="<?= set_value('barcode') ?>" class="form-control">
+                                            <span class="badge badge-danger"><?php echo strip_tags(form_error('barcode')); ?></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Nama Barang</label>
+                                            <input type="text" name="nm_barang" placeholder="Masukkan Nama Barang..." class="form-control">
+                                            <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_barang')); ?></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Harga Jual</label>
+                                            <input type="number" name="hrg_jual" placeholder="Masukkan Harga Jual..." class="form-control">
+                                            <span class="badge badge-danger"><?php echo strip_tags(form_error('hrg_jual')); ?></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Harga Beli</label>
+                                            <input type="number" name="hrg_beli" placeholder="Masukkan Harga Beli..." class="form-control">
+                                            <span class="badge badge-danger"><?php echo strip_tags(form_error('hrg_beli')); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="kategori" class="form-label">Pilih Kategori Barang</label>
+                                            <?php echo form_dropdown('id_kategori', $ddkategori, set_value('id_kategori'), 'class="form-control"'); ?>
+                                            <span class="badge badge-warning"><?php echo strip_tags(form_error('id_kategori')); ?></span>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="satuan" class="form-label">Pilih Satuan Barang</label>
+                                            <?php echo form_dropdown('id_satuan', $ddsatuan, set_value('id_satuan'), 'class="form-control"'); ?>
+                                            <span class="badge badge-warning"><?php echo strip_tags(form_error('id_satuan')); ?></span>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Promo</label>
+                                            <input type="number" name="promo" placeholder="Masukkan Promo..." class="form-control">
+                                            <span class="badge badge-danger"><?php echo strip_tags(form_error('promo')); ?></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Jumlah Barang</label>
+                                            <input type="number" name="qty" placeholder="Masukkan Jumlah Barang" class="form-control">
+                                            <span class="badge badge-danger"><?php echo strip_tags(form_error('qty')); ?></span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Barcode</label>
-                                    <input type="text" name="barcode" placeholder="Masukkan Barcode..." value="<?= set_value('barcode') ?>" class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('barcode')); ?></span>
+                                <div class="float-right">
+                                    <a href="<?php echo base_url("admin/barang") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
                                 </div>
-                                <div class="form-group">
-                                    <label>Nama Barang</label>
-                                    <input type="text" name="nm_barang" placeholder="Masukkan Nama Barang..." class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_barang')); ?></span>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+    <?php
+    }
+
+    //==================================== barang Edit ====================================
+    else if ($page == 'barangEdit') {
+    ?>
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-3">
+                <h1 class="h3 mb-0 text-gray-800">Edit Barang</h1>
+            </div>
+
+            <div class="col-md-12">
+                <div class="card shadow">
+                    <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
+                    <div class="card-body">
+                        <form method="POST" action="<?php echo base_url('admin/barangEdit/' . $b['id_barang']); ?>">
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="supplier" class="form-label">Pilih Supplier</label>
+                                        <?php echo form_dropdown('id_supplier', $ddsupplier, set_value('id_supplier', $b['id_supplier']), 'class="form-control"'); ?>
+                                        <span class="badge badge-warning"><?php echo strip_tags(form_error('id_supplier')); ?></span>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Barcode</label>
+                                        <input type="text" name="barcode" placeholder="Masukkan Barcode..." value="<?php echo set_value('barcode', $b['barcode']); ?>" class="form-control">
+                                        <span class="badge badge-danger"><?php echo strip_tags(form_error('barcode')); ?></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Nama Barang</label>
+                                        <input type="text" name="nm_barang" placeholder="Masukkan Nama Barang..." value="<?php echo set_value('nm_barang', $b['nm_barang']); ?>" class="form-control">
+                                        <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_barang')); ?></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Harga Jual</label>
+                                        <input type="text" name="hrg_jual" placeholder="Masukkan Harga Jual..." value="<?php echo set_value('hrg_jual', $b['hrg_jual']); ?>" class="form-control">
+                                        <span class="badge badge-danger"><?php echo strip_tags(form_error('hrg_jual')); ?></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Harga Beli</label>
+                                        <input type="text" name="hrg_beli" placeholder="Masukkan Harga Beli..." value="<?php echo set_value('hrg_beli', $b['hrg_beli']); ?>" class="form-control">
+                                        <span class="badge badge-danger"><?php echo strip_tags(form_error('hrg_beli')); ?></span>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Harga Jual</label>
-                                    <input type="number" name="hrg_jual" placeholder="Masukkan Harga Jual..." class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('hrg_jual')); ?></span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Harga Beli</label>
-                                    <input type="number" name="hrg_beli" placeholder="Masukkan Harga Beli..." class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('hrg_beli')); ?></span>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="kategori" class="form-label">Pilih Kategori Barang</label>
+                                        <?php echo form_dropdown('id_kategori', $ddkategori, set_value('id_kategori', $b['id_kategori']), 'class="form-control"'); ?>
+                                        <span class="badge badge-warning"><?php echo strip_tags(form_error('id_kategori')); ?></span>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="satuan" class="form-label">Pilih Satuan Barang</label>
+                                        <?php echo form_dropdown('id_satuan', $ddsatuan, set_value('id_satuan', $b['id_satuan']), 'class="form-control"'); ?>
+                                        <span class="badge badge-warning"><?php echo strip_tags(form_error('id_satuan')); ?></span>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Promo</label>
+                                        <input type="text" name="promo" placeholder="Masukkan Promo..." value="<?php echo set_value('promo', $b['promo']); ?>" class="form-control">
+                                        <span class="badge badge-danger"><?php echo strip_tags(form_error('promo')); ?></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Jumlah Barang</label>
+                                        <input type="number" name="qty" placeholder="Masukkan Jumlah Barang" value="<?php echo set_value('qty', $b['qty']); ?>" class="form-control">
+                                        <span class="badge badge-danger"><?php echo strip_tags(form_error('qty')); ?></span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="kategori" class="form-label">Pilih Kategori Barang</label>
-                                    <?php echo form_dropdown('id_kategori', $ddkategori, set_value('id_kategori'), 'class="form-control"'); ?>
-                                    <span class="badge badge-warning"><?php echo strip_tags(form_error('id_kategori')); ?></span>
-
-                                </div>
-                                <div class="form-group">
-                                    <label for="satuan" class="form-label">Pilih Satuan Barang</label>
-                                    <?php echo form_dropdown('id_satuan', $ddsatuan, set_value('id_satuan'), 'class="form-control"'); ?>
-                                    <span class="badge badge-warning"><?php echo strip_tags(form_error('id_satuan')); ?></span>
-
-                                </div>
-                                <div class="form-group">
-                                    <label>Promo</label>
-                                    <input type="number" name="promo" placeholder="Masukkan Promo..." class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('promo')); ?></span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Jumlah Barang</label>
-                                    <input type="number" name="qty" placeholder="Masukkan Jumlah Barang" class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('qty')); ?></span>
-                                </div>
+                            <div class="float-right">
+                                <a href="<?php echo base_url("admin/barang") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
                             </div>
-                        </div>
-                        <div class="float-right">
-                            <a href="<?php echo base_url("admin/barang") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                        <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
-                    </form>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
+                        </form>
+                    </div>
                 </div>
             </div>
+
+
         </div>
-
-
-    </div>
-    <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
 
     </div>
     <!-- End of Main Content -->
 <?php
-}
+    }
 
-//==================================== barang Edit ====================================
-else if ($page == 'barangEdit') {
-?>
-    <!-- Begin Page Content -->
-    <div class="container-fluid">
-        <!-- Page Heading -->
-        <div class="d-sm-flex align-items-center justify-content-between mb-3">
-            <h1 class="h3 mb-0 text-gray-800">Edit Barang</h1>
-        </div>
-
-        <div class="col-md-12">
-            <div class="card shadow">
-                <div class="card-header"><strong>Isi Form Dibawah Ini!</strong></div>
-                <div class="card-body">
-                    <form method="POST" action="<?php echo base_url('admin/barangEdit/' . $b['id_barang']); ?>">
-                        <div class="form-row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="supplier" class="form-label">Pilih Supplier</label>
-                                    <?php echo form_dropdown('id_supplier', $ddsupplier, set_value('id_supplier', $b['id_supplier']), 'class="form-control"'); ?>
-                                    <span class="badge badge-warning"><?php echo strip_tags(form_error('id_supplier')); ?></span>
-
-                                </div>
-                                <div class="form-group">
-                                    <label>Barcode</label>
-                                    <input type="text" name="barcode" placeholder="Masukkan Barcode..." value="<?php echo set_value('barcode', $b['barcode']); ?>" class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('barcode')); ?></span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Nama Barang</label>
-                                    <input type="text" name="nm_barang" placeholder="Masukkan Nama Barang..." value="<?php echo set_value('nm_barang', $b['nm_barang']); ?>" class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('nm_barang')); ?></span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Harga Jual</label>
-                                    <input type="text" name="hrg_jual" placeholder="Masukkan Harga Jual..." value="<?php echo set_value('hrg_jual', $b['hrg_jual']); ?>" class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('hrg_jual')); ?></span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Harga Beli</label>
-                                    <input type="text" name="hrg_beli" placeholder="Masukkan Harga Beli..." value="<?php echo set_value('hrg_beli', $b['hrg_beli']); ?>" class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('hrg_beli')); ?></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="kategori" class="form-label">Pilih Kategori Barang</label>
-                                    <?php echo form_dropdown('id_kategori', $ddkategori, set_value('id_kategori', $b['id_kategori']), 'class="form-control"'); ?>
-                                    <span class="badge badge-warning"><?php echo strip_tags(form_error('id_kategori')); ?></span>
-
-                                </div>
-                                <div class="form-group">
-                                    <label for="satuan" class="form-label">Pilih Satuan Barang</label>
-                                    <?php echo form_dropdown('id_satuan', $ddsatuan, set_value('id_satuan', $b['id_satuan']), 'class="form-control"'); ?>
-                                    <span class="badge badge-warning"><?php echo strip_tags(form_error('id_satuan')); ?></span>
-
-                                </div>
-                                <div class="form-group">
-                                    <label>Promo</label>
-                                    <input type="text" name="promo" placeholder="Masukkan Promo..." value="<?php echo set_value('promo', $b['promo']); ?>" class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('promo')); ?></span>
-                                </div>
-                                <div class="form-group">
-                                    <label>Jumlah Barang</label>
-                                    <input type="number" name="qty" placeholder="Masukkan Jumlah Barang" value="<?php echo set_value('qty', $b['qty']); ?>" class="form-control">
-                                    <span class="badge badge-danger"><?php echo strip_tags(form_error('qty')); ?></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="float-right">
-                            <a href="<?php echo base_url("admin/barang") ?>" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;&nbsp;Kembali</a>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                        <button type="reset" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;&nbsp;Batal</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-
-    </div>
-    <!-- /.container-fluid -->
-
-    </div>
-    <!-- End of Main Content -->
-<?php
-}
-
-//==================================== Kategori Tambah ====================================
-else if ($page == 'kategoriBarang') {
+    //==================================== Kategori Tambah ====================================
+    else if ($page == 'kategoriBarang') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1274,10 +1321,10 @@ For more information about DataTables, please visit the <a target="_blank" href=
     </div>
     <!-- End of Main Content -->
 <?php
-}
+    }
 
-//==================================== Kategori Tambah ====================================
-else if ($page == 'kategoriTambah') {
+    //==================================== Kategori Tambah ====================================
+    else if ($page == 'kategoriTambah') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1319,10 +1366,10 @@ else if ($page == 'kategoriTambah') {
     <!-- End of Main Content -->
 
 <?php
-}
+    }
 
-//==================================== Kategori Edit ====================================
-else if ($page == 'kategoriEdit') {
+    //==================================== Kategori Edit ====================================
+    else if ($page == 'kategoriEdit') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1364,10 +1411,10 @@ else if ($page == 'kategoriEdit') {
     <!-- End of Main Content -->
 
 <?php
-}
+    }
 
-//==================================== Satuan Barang ====================================
-else if ($page == 'satuanBarang') {
+    //==================================== Satuan Barang ====================================
+    else if ($page == 'satuanBarang') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1426,10 +1473,10 @@ For more information about DataTables, please visit the <a target="_blank" href=
     </div>
     <!-- End of Main Content -->
 <?php
-}
+    }
 
-//==================================== Satuan Tambah ====================================
-else if ($page == 'satuanTambah') {
+    //==================================== Satuan Tambah ====================================
+    else if ($page == 'satuanTambah') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1472,10 +1519,10 @@ else if ($page == 'satuanTambah') {
 
 
 <?php
-}
+    }
 
-//==================================== Satuan Edit ====================================
-else if ($page == 'satuanEdit') {
+    //==================================== Satuan Edit ====================================
+    else if ($page == 'satuanEdit') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1517,10 +1564,10 @@ else if ($page == 'satuanEdit') {
     </div>
     <!-- End of Main Content -->
 <?php
-}
+    }
 
-//==================================== Pelanggan ====================================
-else if ($page == 'pelanggan') {
+    //==================================== Pelanggan ====================================
+    else if ($page == 'pelanggan') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1603,9 +1650,9 @@ else if ($page == 'pelanggan') {
 
 
 <?php
-}
-//==================================== Pelanggan Tambah ====================================
-else if ($page == 'pelangganTambah') {
+    }
+    //==================================== Pelanggan Tambah ====================================
+    else if ($page == 'pelangganTambah') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1665,9 +1712,9 @@ else if ($page == 'pelangganTambah') {
     <!-- End of Main Content -->
 
 <?php
-}
-//==================================== Pelanggan Edit ====================================
-else if ($page == 'pelangganEdit') {
+    }
+    //==================================== Pelanggan Edit ====================================
+    else if ($page == 'pelangganEdit') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1727,10 +1774,10 @@ else if ($page == 'pelangganEdit') {
     <!-- End of Main Content -->
 
 <?php
-}
+    }
 
-//==================================== Berita ====================================
-else if ($page == 'berita') {
+    //==================================== Berita ====================================
+    else if ($page == 'berita') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1826,9 +1873,9 @@ else if ($page == 'berita') {
     </div>
     <!-- End of Main Content -->
 <?php
-}
-//==================================== Berita Tambah ====================================
-else if ($page == 'beritaTambah') {
+    }
+    //==================================== Berita Tambah ====================================
+    else if ($page == 'beritaTambah') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1887,9 +1934,9 @@ else if ($page == 'beritaTambah') {
     <!-- End of Main Content -->
 
 <?php
-}
-//==================================== Berita Edit ====================================
-else if ($page == 'beritaEdit') {
+    }
+    //==================================== Berita Edit ====================================
+    else if ($page == 'beritaEdit') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -1949,10 +1996,10 @@ else if ($page == 'beritaEdit') {
 
 
 <?php
-}
+    }
 
-//==================================== User ====================================
-else if ($page == 'user') {
+    //==================================== User ====================================
+    else if ($page == 'user') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -2011,10 +2058,10 @@ else if ($page == 'user') {
     </div>
     <!-- End of Main Content -->
 <?php
-}
+    }
 
-//==================================== User Edit ====================================
-else if ($page == 'userEdit') {
+    //==================================== User Edit ====================================
+    else if ($page == 'userEdit') {
 ?>
 
     <!-- Begin Page Content -->
@@ -2064,10 +2111,10 @@ else if ($page == 'userEdit') {
 
 
 <?php
-}
+    }
 
-//==================================== ProfileToko ====================================
-else if ($page == 'profilToko') {
+    //==================================== ProfileToko ====================================
+    else if ($page == 'profilToko') {
 ?>
 
     <div class="container-fluid">
@@ -2130,10 +2177,10 @@ else if ($page == 'profilToko') {
 
 
 <?php
-}
+    }
 
-//==================================== ProfileToko ====================================
-else if ($page == 'profilTokoEdit') {
+    //==================================== ProfileToko ====================================
+    else if ($page == 'profilTokoEdit') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -2196,10 +2243,10 @@ else if ($page == 'profilTokoEdit') {
     <!-- End of Main Content -->
 
 <?php
-}
+    }
 
-//==================================== configEmail ====================================
-else if ($page == 'configEmail') {
+    //==================================== configEmail ====================================
+    else if ($page == 'configEmail') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -2290,10 +2337,10 @@ For more information about DataTables, please visit the <a target="_blank" href=
         </div>
     </div>
 <?php
-}
+    }
 
-//==================================== configEmailEdit ====================================
-else if ($page == 'configEmailEdit') {
+    //==================================== configEmailEdit ====================================
+    else if ($page == 'configEmailEdit') {
 ?>
 
     <!-- Begin Page Content -->
@@ -2342,10 +2389,10 @@ else if ($page == 'configEmailEdit') {
     <!-- End of Main Content -->
 
 <?php
-}
+    }
 
-//==================================== Supplier ====================================
-else if ($page == 'supplier') {
+    //==================================== Supplier ====================================
+    else if ($page == 'supplier') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -2411,10 +2458,10 @@ For more information about DataTables, please visit the <a target="_blank" href=
 
 
 <?php
-}
+    }
 
-//==================================== supplier Tambah ====================================
-else if ($page == 'supplierTambah') {
+    //==================================== supplier Tambah ====================================
+    else if ($page == 'supplierTambah') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -2466,10 +2513,10 @@ else if ($page == 'supplierTambah') {
     <!-- End of Main Content -->
 
 <?php
-}
+    }
 
-//==================================== Supplier Edit ====================================
-else if ($page == 'supplierEdit') {
+    //==================================== Supplier Edit ====================================
+    else if ($page == 'supplierEdit') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -2521,10 +2568,10 @@ else if ($page == 'supplierEdit') {
 
 
 <?php
-}
+    }
 
-//==================================== Suply Barang ====================================
-else if ($page == 'suplyBarang') {
+    //==================================== Suply Barang ====================================
+    else if ($page == 'suplyBarang') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -2584,10 +2631,10 @@ else if ($page == 'suplyBarang') {
 
 
 <?php
-}
+    }
 
-//==================================== Suply Barang ====================================
-else if ($page == 'suplyBarangTambah') {
+    //==================================== Suply Barang ====================================
+    else if ($page == 'suplyBarangTambah') {
 ?>
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -2640,7 +2687,7 @@ else if ($page == 'suplyBarangTambah') {
     <!-- End of Main Content -->
 
 <?php
-}
+    }
 
 
 ?>
