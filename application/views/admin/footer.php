@@ -826,7 +826,6 @@
             label: 'Total Terjual',
             data: data,
             backgroundColor: backgroundColors,
-            borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 1
         }];
 
