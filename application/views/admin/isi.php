@@ -6,6 +6,25 @@ if ($page == 'dashboard') {
     <!-- Begin Page Content -->
     <div class="container-fluid">
 
+        <!-- Notifikasi Barang Hampir Habis atau Habis -->
+        <?php if ($barang_habis) : ?>
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>Perhatian!</strong> Beberapa barang hampir habis atau habis:
+                        <ul>
+                            <?php foreach ($barang_habis as $barang) : ?>
+                                <li><?= $barang->nm_barang ?> (<?= $barang->qty == 0 ? 'Habis' : 'Hampir habis' ?>)</li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-3">
             <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
@@ -137,6 +156,24 @@ if ($page == 'dashboard') {
                 </div>
             </div>
         <?php endif; ?>
+
+        <!-- Content Row -->
+        <?php if ($this->session->userdata('id_level') == 1 || $this->session->userdata('id_level') == 3) : ?>
+            <div class="row">
+                <div class="col">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Barang Terlaris</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="barangTerlarisChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
     </div>
     <!-- /.container-fluid -->
     </div>
@@ -237,12 +274,17 @@ else if ($page == 'kasir') {
                     margin: 0;
                 }
 
-                .sidebar,
-                .footer,
+                .modal-dialog {
+                    border: none !important;
+                }
+
+                sidebar,
+                footer,
                 .modal-footer,
                 .modal-header,
-                title {
-                    display: none;
+                title,
+                .hide-on-print {
+                    display: none !important;
                 }
             }
 
@@ -502,7 +544,7 @@ else if ($page == 'kasir') {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <button type="button" class="close hide-on-print" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 </div>
                 <div class="modal-body" id="content_struck"></div>
                 <div class="modal-footer">
@@ -612,19 +654,13 @@ For more information about DataTables, please visit the <a target="_blank" href=
                                     <td class="text-center"><?php echo $lp['nm_barang']; ?></td>
                                     <td class="text-center"><?php echo $lp['jumlah_jual']; ?></td>
                                     <td class="text-center"><?php echo 'Rp. ' . number_format($lp['hrg_jual'], 0, ',', '.'); ?></td>
-                                    <td class="text-center"><?php echo 'Rp. ' . number_format($lp['hrg_jual'] * $lp['jumlah_jual'], 0, ',', '.'); ?></td>
+                                    <td class="text-center"><?php echo 'Rp. ' . number_format($lp['total_harga'], 0, ',', '.'); ?></td>
                                     <td class="text-center"><?php echo $lp['last_qty'];
                                                             ?></td>
                                 </tr>
                             <?php } ?>
                         </tbody>
 
-                        <!-- <tfoot>
-                            <tr class="bg-dark text-white">
-                                <th style="text-align:center" colspan="1">Jumlah</th>
-                                <th style="text-align:center"><?= 'Rp. ' . number_format($totalharga, 0, ',', '.'); ?></th>
-                            </tr>
-                        </tfoot> -->
 
                     </table>
                 </div>

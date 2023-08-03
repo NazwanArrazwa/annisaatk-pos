@@ -15,7 +15,7 @@
 <!-- End of Page Wrapper -->
 
 <!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
+<a class="scroll-to-top rounded hide-on-print" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
 
@@ -622,10 +622,12 @@
     // Call the dataTables jQuery plugin
     $(document).ready(function() {
         var table = $('#myTable').DataTable({
+            "aaSorting": [
+                [0, "desc"]
+            ],
             "paging": true,
             "lengthChange": true,
             "searching": true,
-            "ordering": true,
             "info": true,
             "autoWidth": false,
             "responsive": true,
@@ -796,13 +798,108 @@
     setTimeout(function() {
         $('.preloader').fadeOut(1000);
     }, 500);
-
-    $(function() {
-        $('.alert').delay(2000).fadeOut(1500);
-    })
 </script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: '<?php echo base_url('Admin/BarangTerlaris'); ?>',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                var labels = [];
+                var data = [];
 
+                for (var i = 0; i < response.length; i++) {
+                    labels.push(response[i].nm_barang);
+                    data.push(response[i].total_terjual);
+                }
 
+                createChart(labels, data);
+            }
+        });
+    });
+
+    function createChart(labels, data) {
+        var ctx = document.getElementById('barangTerlarisChart').getContext('2d');
+        var backgroundColors = ['rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 205, 86, 0.2)', 'rgba(153, 102, 255, 0.2)']; // Anda dapat menambahkan lebih banyak warna di sini
+        var datasets = [{
+            label: 'Total Terjual',
+            data: data,
+            backgroundColor: backgroundColors,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }];
+
+        var barangTerlarisChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 25,
+                        top: 25,
+                        bottom: 0
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        time: {
+                            unit: 'date'
+                        },
+                        gridLines: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 7
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            maxTicksLimit: 5,
+                            padding: 10,
+                            // Include a rupiah sign in the ticks
+                            callback: function(value, index, values) {
+                                return '' + number_format(value);
+                            }
+                        },
+                        gridLines: {
+                            color: "rgb(234, 236, 244)",
+                            zeroLineColor: "rgb(234, 236, 244)",
+                            drawBorder: false,
+                            borderDash: [2],
+                            zeroLineBorderDash: [2]
+                        }
+                    }],
+                },
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    titleMarginBottom: 10,
+                    titleFontColor: '#6e707e',
+                    titleFontSize: 14,
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    intersect: false,
+                    mode: 'index',
+                    caretPadding: 10,
+
+                }
+            }
+        });
+    }
+</script>
 <!-- 
 <script>
     var modal = $('#modalData');

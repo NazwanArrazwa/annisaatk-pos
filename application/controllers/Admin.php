@@ -43,6 +43,10 @@ class Admin extends CI_Controller
         $data['jml_pelanggan'] = $this->m_umum->jumlah_record_tabel('tb_pelanggan', 'nm_pelanggan', ['Umum']);
         $data['jml_supplier']    = $this->m_umum->jumlah_record_tabel('tb_supplier');
         $data['pendapatan_harian'] = $this->m_admin->sum_daily('tb_transaksi');
+
+        // Mengambil data barang dengan jumlah kurang dari 10
+        $data['barang_habis'] = $this->m_admin->get_barang_habis(20); // Ganti '10' sesuai kebutuhan
+
         $this->tampil($data);
     }
 
@@ -50,6 +54,13 @@ class Admin extends CI_Controller
     {
         $this->load->model('m_admin');
         $data = $this->m_admin->dtTahunan();
+        echo json_encode($data);
+    }
+
+    public function BarangTerlaris()
+    {
+        $this->load->model('m_admin');
+        $data = $this->m_admin->barangTerlaris();
         echo json_encode($data);
     }
 
@@ -136,19 +147,20 @@ class Admin extends CI_Controller
         $this->tampil($data);
     }
 
-    //method yang digunakan untuk request data Barang
+    // Method yang digunakan untuk request data Barang
     public function barangList()
     {
         header('Content-Type: application/json');
         $list = $this->m_admin->get_datatables();
         $data = array();
         $no = 1;
-        //looping data barang
+        // Looping data barang
         foreach ($list as $barang) {
             $row = array();
             $row[] = $no++;
             $row[] = $barang->barcode;
             $row[] = $barang->nm_barang;
+
             // Cek apakah ada diskon atau tidak
             if ($barang->promo > 0) {
                 // Hitung harga setelah diskon
@@ -157,9 +169,10 @@ class Admin extends CI_Controller
             } else {
                 $row[] = 'Rp.' . number_format($barang->hrg_jual, 2);
             }
+
             $row[] = $barang->qty;
-            $row[] =  '<input type="number" min="1" name="quantity" class="form-control quantity" id="' . $barang->barcode . '">';
-            $row[] =  '<button type="button" name="add_cart" id="add_cart" class="btn btn-success btn-sm add_cart" data-productname="' . $barang->nm_barang . '" data-price="' . $barang->hrg_jual . '" data-productid="' . $barang->barcode . '" data-productprimary="' . $barang->id_barang . '"><i class="fa fa-cart-plus"></i> Tambah</button>';
+            $row[] = '<input type="number" min="1" name="quantity" class="form-control quantity" id="' . $barang->barcode . '">';
+            $row[] = '<button type="button" name="add_cart" id="add_cart" class="btn btn-success btn-sm add_cart" data-productname="' . $barang->nm_barang . '" data-price="' . ($barang->promo > 0 ? $harga_setelah_diskon : $barang->hrg_jual) . '" data-productid="' . $barang->barcode . '" data-productprimary="' . $barang->id_barang . '"><i class="fa fa-cart-plus"></i> Tambah</button>';
             $data[] = $row;
         }
         $output = array(
@@ -168,10 +181,9 @@ class Admin extends CI_Controller
             "recordsFiltered" => $this->m_admin->count_filtered(),
             "data" => $data,
         );
-        //output to json format
+        // Output to json format
         $this->output->set_output(json_encode($output));
     }
-
 
     public function get_pelanggan_data()
     {
@@ -507,8 +519,8 @@ class Admin extends CI_Controller
 
         $output .= '
         <div style="text-align: center; font-size: 20px; font-weight: bolder;">' . $toko->nm_toko . '</div>
-        <div style="border-top:1px dashed; border-bottom:1px dashed; margin: 20px 0;">
-        <div style="text-align: center; font-weight: bolder;">Invoice #' . $kode_transaksi . '</div>
+        <div style="border-top:1px dashed; border-bottom:1px dashed; margin: 10px 0;">
+        <div style="text-align: center; font-weight: bolder; margin: top 10px;">Invoice #' . $kode_transaksi . '</div>
         <div style="text-align: center; font-weight: bolder;">' . $toko->alamat . '</div>
         <div style="text-align: center; font-weight: bolder;">' . $toko->no_telp . '</div>
         <div style="text-align: center; font-weight: bolder;" id="time_transaction" data-transaction="' . date('Y-m-d  h:i:s') . '">' . date('Y-m-d  h:i:s') . '</div>
@@ -516,7 +528,7 @@ class Admin extends CI_Controller
         $output .= '<div style="border-top:1px dashed; border-bottom:1px dashed; margin: 20px 0;">'; // body
 
         $output .= '<div style="display: flex; border-bottom:1px dashed; margin-bottom: 10px;">
-        <div style="width: 20%; font-weight: bolder;">Nama</div>
+        <div style="width: 40%; font-weight: bolder;">Nama</div>
         <div style="width: 40%; font-weight: bolder; text-align: center;">Qty</div>
         <div style="width: 60%; font-weight: bolder; text-align: right;">Sub Total</div>
     </div>';
@@ -524,7 +536,7 @@ class Admin extends CI_Controller
         foreach ($this->cart->contents() as $row) {
             $output .= '
             <div style="display: flex; margin-bottom: 10px;">
-                <div style="width: 20%; font-weight: bolder;">' . $row['name'] . '</div>
+                <div style="width: 40%; font-weight: bolder;">' . $row['name'] . '</div>
                 <div style="width: 40%; font-weight: bolder; text-align: center;">' . $row['qty'] . '</div>
                 <div style="width: 60%; font-weight: bolder;  text-align: right;">Rp.' . number_format($row['subtotal'], 0, ',', '.')  . '</div>
             </div>';
@@ -710,121 +722,121 @@ class Admin extends CI_Controller
 
         $data['transaksi'] = $this->m_admin->dtTransaksiBarang($startdate, $enddate);
         $this->tampil($data);
-
-        // $spreadsheet = new Spreadsheet();
-        // $sheet = $spreadsheet->getActiveSheet();
-
-        // // Mengatur font menjadi Times New Roman
-        // $style = $sheet->getStyle('A:G');
-        // $font = $style->getFont();
-        // $font->setName('Times New Roman');
-
-        // $sheet->mergeCells('A1:G1');
-        // $sheet->setCellValue('A1', 'Laporan Penjualan Barang Toko AnnisaATK');
-
-        // $sheet->setCellValue('A2', 'Tanggal');
-        // $sheet->setCellValue('B2', 'Barcode Barang');
-        // $sheet->setCellValue('C2', 'Barang Yang Terjual');
-        // $sheet->setCellValue('D2', 'Jumlah');
-        // $sheet->setCellValue('E2', 'Harga Satuan');
-        // $sheet->setCellValue('F2', 'Harga Total');
-        // $sheet->setCellValue('G2', 'Sisa Stok');
-
-        // // Dapatkan objek gaya (style) sel A1
-        // $style = $sheet->getStyle('A1');
-        // // Dapatkan objek perataan (alignment) dari objek gaya (style)
-        // $alignment = $style->getAlignment();
-        // // Aktifkan wrap teks pada perataan (alignment)
-        // $alignment->setWrapText(true);
-
-        // // Mengatur tinggi baris pada baris pertama
-        // $rowHeight = 33; // Tinggi baris dalam satuan "point"
-        // $sheet->getRowDimension(1)->setRowHeight($rowHeight);
-
-
-
-        // // Inisialisasi variabel total
-        // $total = 0;
-        // // Isi data dari array $data['laporan'] ke dalam sheet
-        // $row = 3; // Mulai dari baris kedua
-        // foreach ($data['transaksi'] as $laporan) {
-        //     $sheet->setCellValue('A' . $row, $laporan['waktu']);
-        //     $sheet->setCellValue('B' . $row, $laporan['barcode']);
-        //     $sheet->setCellValue('C' . $row, $laporan['nm_barang']);
-        //     $sheet->setCellValue('D' . $row, $laporan['jumlah_jual']);
-        //     $sheet->setCellValue('E' . $row, $laporan['hrg_jual']);
-
-        //     // Menambahkan nilai total_harga ke total
-        //     $total = $laporan['hrg_jual'] * $laporan['jumlah_jual'];
-
-        //     $sheet->setCellValue('F' . $row, $total);
-        //     $sheet->setCellValue('G' . $row, $laporan['last_qty']);
-        //     $row++;
-        // }
-
-
-
-        // // // Menggabungkan sel dari kolom A hingga E untuk judul "Total"
-        // // $sheet->mergeCells('A' . $row . ':D' . $row);
-        // // $sheet->setCellValue('A' . $row, 'Total');
-        // // $sheet->setCellValue('E' . $row, $total);
-
-        // // Set lebar kolom A dan B sesuai panjang teks terpanjang
-        // $sheet->getColumnDimension('A')->setAutoSize(true);
-        // $sheet->getColumnDimension('B')->setAutoSize(true);
-        // $sheet->getColumnDimension('C')->setAutoSize(true);
-        // $sheet->getColumnDimension('D')->setAutoSize(true);
-        // $sheet->getColumnDimension('E')->setAutoSize(true);
-        // $sheet->getColumnDimension('F')->setAutoSize(true);
-        // $sheet->getColumnDimension('G')->setAutoSize(true);
-
-        // $lastRow = $sheet->getHighestRow();
-        // $lastColumn = $sheet->getHighestColumn();
-
-        // // Mendapatkan objek perataan (alignment) dari objek gaya (style)
-        // $alignment = $style->getAlignment();
-
-        // // Mengatur perataan teks menjadi tengah (middle align)
-        // $alignment->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-
-        // $alignment = $sheet->getStyle('A1:G' . $lastRow)->getAlignment();
-        // $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-
-        // // Menambahkan border pada setiap sel
-        // $borderStyle = [
-        //     'borders' => [
-        //         'allBorders' => [
-        //             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-        //             'color' => ['rgb' => '000000'],
-        //         ],
-        //     ],
-        // ];
-
-
-        // $sheet->getStyle('A2:' . $lastColumn . $lastRow)->applyFromArray($borderStyle);
-
-        // // Memberi warna pada sel A1 hingga B1
-        // $columnStyle = [
-        //     'fill' => [
-        //         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-        //         'startColor' => [
-        //             'rgb' => '00FFFF', // Ganti dengan kode warna yang diinginkan
-        //         ],
-        //     ],
-        // ];
-
-        // $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray($columnStyle);
-
-
-        // $writer = new Xlsx($spreadsheet);
-        // // Simpan file Excel ke direktori
-        // $filename = 'penjualan_barang.xlsx';
-        // $savePath = 'Excel/PenjualanBarang/' . $filename;
-        // $writer->save($savePath);
-        // $data['downloadLink'] = base_url('admin/downloadPenjualanBarang/' . $filename); // Buat link download menggunakan base_url dan nama file
-
-
     }
+
+    // $spreadsheet = new Spreadsheet();
+    // $sheet = $spreadsheet->getActiveSheet();
+
+    // // Mengatur font menjadi Times New Roman
+    // $style = $sheet->getStyle('A:G');
+    // $font = $style->getFont();
+    // $font->setName('Times New Roman');
+
+    // $sheet->mergeCells('A1:G1');
+    // $sheet->setCellValue('A1', 'Laporan Penjualan Barang Toko AnnisaATK');
+
+    // $sheet->setCellValue('A2', 'Tanggal');
+    // $sheet->setCellValue('B2', 'Barcode Barang');
+    // $sheet->setCellValue('C2', 'Barang Yang Terjual');
+    // $sheet->setCellValue('D2', 'Jumlah');
+    // $sheet->setCellValue('E2', 'Harga Satuan');
+    // $sheet->setCellValue('F2', 'Harga Total');
+    // $sheet->setCellValue('G2', 'Sisa Stok');
+
+    // // Dapatkan objek gaya (style) sel A1
+    // $style = $sheet->getStyle('A1');
+    // // Dapatkan objek perataan (alignment) dari objek gaya (style)
+    // $alignment = $style->getAlignment();
+    // // Aktifkan wrap teks pada perataan (alignment)
+    // $alignment->setWrapText(true);
+
+    // // Mengatur tinggi baris pada baris pertama
+    // $rowHeight = 33; // Tinggi baris dalam satuan "point"
+    // $sheet->getRowDimension(1)->setRowHeight($rowHeight);
+
+
+
+    // // Inisialisasi variabel total
+    // $total = 0;
+    // // Isi data dari array $data['laporan'] ke dalam sheet
+    // $row = 3; // Mulai dari baris kedua
+    // foreach ($data['transaksi'] as $laporan) {
+    //     $sheet->setCellValue('A' . $row, $laporan['waktu']);
+    //     $sheet->setCellValue('B' . $row, $laporan['barcode']);
+    //     $sheet->setCellValue('C' . $row, $laporan['nm_barang']);
+    //     $sheet->setCellValue('D' . $row, $laporan['jumlah_jual']);
+    //     $sheet->setCellValue('E' . $row, $laporan['hrg_jual']);
+
+    //     // Menambahkan nilai total_harga ke total
+    //     $total = $laporan['hrg_jual'] * $laporan['jumlah_jual'];
+
+    //     $sheet->setCellValue('F' . $row, $total);
+    //     $sheet->setCellValue('G' . $row, $laporan['last_qty']);
+    //     $row++;
+    // }
+
+
+
+    // // // Menggabungkan sel dari kolom A hingga E untuk judul "Total"
+    // // $sheet->mergeCells('A' . $row . ':D' . $row);
+    // // $sheet->setCellValue('A' . $row, 'Total');
+    // // $sheet->setCellValue('E' . $row, $total);
+
+    // // Set lebar kolom A dan B sesuai panjang teks terpanjang
+    // $sheet->getColumnDimension('A')->setAutoSize(true);
+    // $sheet->getColumnDimension('B')->setAutoSize(true);
+    // $sheet->getColumnDimension('C')->setAutoSize(true);
+    // $sheet->getColumnDimension('D')->setAutoSize(true);
+    // $sheet->getColumnDimension('E')->setAutoSize(true);
+    // $sheet->getColumnDimension('F')->setAutoSize(true);
+    // $sheet->getColumnDimension('G')->setAutoSize(true);
+
+    // $lastRow = $sheet->getHighestRow();
+    // $lastColumn = $sheet->getHighestColumn();
+
+    // // Mendapatkan objek perataan (alignment) dari objek gaya (style)
+    // $alignment = $style->getAlignment();
+
+    // // Mengatur perataan teks menjadi tengah (middle align)
+    // $alignment->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+    // $alignment = $sheet->getStyle('A1:G' . $lastRow)->getAlignment();
+    // $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+    // // Menambahkan border pada setiap sel
+    // $borderStyle = [
+    //     'borders' => [
+    //         'allBorders' => [
+    //             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+    //             'color' => ['rgb' => '000000'],
+    //         ],
+    //     ],
+    // ];
+
+
+    // $sheet->getStyle('A2:' . $lastColumn . $lastRow)->applyFromArray($borderStyle);
+
+    // // Memberi warna pada sel A1 hingga B1
+    // $columnStyle = [
+    //     'fill' => [
+    //         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+    //         'startColor' => [
+    //             'rgb' => '00FFFF', // Ganti dengan kode warna yang diinginkan
+    //         ],
+    //     ],
+    // ];
+
+    // $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray($columnStyle);
+
+
+    // $writer = new Xlsx($spreadsheet);
+    // // Simpan file Excel ke direktori
+    // $filename = 'penjualan_barang.xlsx';
+    // $savePath = 'Excel/PenjualanBarang/' . $filename;
+    // $writer->save($savePath);
+    // $data['downloadLink'] = base_url('admin/downloadPenjualanBarang/' . $filename); // Buat link download menggunakan base_url dan nama file
+
+
 
     // public function downloadPenjualanBarang($filename)
     // {
@@ -857,98 +869,98 @@ class Admin extends CI_Controller
 
         $data['laporan'] = $this->m_admin->dtLaporanKeuangan($startdate, $enddate);
         $this->tampil($data);
-
-        // $spreadsheet = new Spreadsheet();
-        // $sheet = $spreadsheet->getActiveSheet();
-
-        // // Mengatur font menjadi Times New Roman
-        // $style = $sheet->getStyle('A:B');
-        // $font = $style->getFont();
-        // $font->setName('Times New Roman');
-
-        // $sheet->mergeCells('A1:B1');
-        // $sheet->setCellValue('A1', 'Laporan Keuangan Toko AnnisaATK');
-
-        // $sheet->setCellValue('A2', 'Tanggal');
-        // $sheet->setCellValue('B2', 'Keuntungan');
-
-        // // Dapatkan objek gaya (style) sel A1
-        // $style = $sheet->getStyle('A1');
-        // // Dapatkan objek perataan (alignment) dari objek gaya (style)
-        // $alignment = $style->getAlignment();
-        // // Aktifkan wrap teks pada perataan (alignment)
-        // $alignment->setWrapText(true);
-
-        // // Mengatur tinggi baris pada baris pertama
-        // $rowHeight = 33; // Tinggi baris dalam satuan "point"
-        // $sheet->getRowDimension(1)->setRowHeight($rowHeight);
-
-
-        // // Inisialisasi variabel total
-        // $total = 0;
-        // // Isi data dari array $data['laporan'] ke dalam sheet
-        // $row = 3; // Mulai dari baris kedua
-        // foreach ($data['laporan'] as $laporan) {
-        //     $sheet->setCellValue('A' . $row, $laporan['tanggal']);
-        //     $sheet->setCellValue('B' . $row, $laporan['total_harga']);
-        //     $row++;
-        //     // Menambahkan nilai total_harga ke total
-        //     $total += $laporan['total_harga'];
-        // }
-
-        // // Menyimpan nilai total pada kolom B, baris terakhir
-        // $sheet->setCellValue('A' . $row, 'Total');
-        // $sheet->setCellValue('B' . $row, $total);
-
-        // // Set lebar kolom A dan B sesuai panjang teks terpanjang
-        // $sheet->getColumnDimension('A')->setAutoSize(true);
-        // $sheet->getColumnDimension('B')->setAutoSize(true);
-
-        // $lastRow = $sheet->getHighestRow();
-        // $lastColumn = $sheet->getHighestColumn();
-
-        // // Mendapatkan objek perataan (alignment) dari objek gaya (style)
-        // $alignment = $style->getAlignment();
-
-        // // Mengatur perataan teks menjadi tengah (middle align)
-        // $alignment->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-
-        // $alignment = $sheet->getStyle('A1:B' . $lastRow)->getAlignment();
-        // $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        // // Menambahkan border pada setiap sel
-        // $borderStyle = [
-        //     'borders' => [
-        //         'allBorders' => [
-        //             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-        //             'color' => ['rgb' => '000000'],
-        //         ],
-        //     ],
-        // ];
-
-
-        // $sheet->getStyle('A2:' . $lastColumn . $lastRow)->applyFromArray($borderStyle);
-
-        // // Memberi warna pada sel A1 hingga B1
-        // $columnStyle = [
-        //     'fill' => [
-        //         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-        //         'startColor' => [
-        //             'rgb' => '00FFFF', // Ganti dengan kode warna yang diinginkan
-        //         ],
-        //     ],
-        // ];
-
-        // $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray($columnStyle);
-
-        // $writer = new Xlsx($spreadsheet);
-        // // Simpan file Excel ke direktori
-        // $filename = 'laporan_keuangan.xlsx';
-        // $savePath = 'Excel/LaporanKeuangan/' . $filename;
-        // $writer->save($savePath);
-
-        // $data['downloadLink'] = base_url('admin/downloadLaporanKeuangan/' . $filename); // Buat link download menggunakan base_url dan nama file
-
     }
+
+    // $spreadsheet = new Spreadsheet();
+    // $sheet = $spreadsheet->getActiveSheet();
+
+    // // Mengatur font menjadi Times New Roman
+    // $style = $sheet->getStyle('A:B');
+    // $font = $style->getFont();
+    // $font->setName('Times New Roman');
+
+    // $sheet->mergeCells('A1:B1');
+    // $sheet->setCellValue('A1', 'Laporan Keuangan Toko AnnisaATK');
+
+    // $sheet->setCellValue('A2', 'Tanggal');
+    // $sheet->setCellValue('B2', 'Keuntungan');
+
+    // // Dapatkan objek gaya (style) sel A1
+    // $style = $sheet->getStyle('A1');
+    // // Dapatkan objek perataan (alignment) dari objek gaya (style)
+    // $alignment = $style->getAlignment();
+    // // Aktifkan wrap teks pada perataan (alignment)
+    // $alignment->setWrapText(true);
+
+    // // Mengatur tinggi baris pada baris pertama
+    // $rowHeight = 33; // Tinggi baris dalam satuan "point"
+    // $sheet->getRowDimension(1)->setRowHeight($rowHeight);
+
+
+    // // Inisialisasi variabel total
+    // $total = 0;
+    // // Isi data dari array $data['laporan'] ke dalam sheet
+    // $row = 3; // Mulai dari baris kedua
+    // foreach ($data['laporan'] as $laporan) {
+    //     $sheet->setCellValue('A' . $row, $laporan['tanggal']);
+    //     $sheet->setCellValue('B' . $row, $laporan['total_harga']);
+    //     $row++;
+    //     // Menambahkan nilai total_harga ke total
+    //     $total += $laporan['total_harga'];
+    // }
+
+    // // Menyimpan nilai total pada kolom B, baris terakhir
+    // $sheet->setCellValue('A' . $row, 'Total');
+    // $sheet->setCellValue('B' . $row, $total);
+
+    // // Set lebar kolom A dan B sesuai panjang teks terpanjang
+    // $sheet->getColumnDimension('A')->setAutoSize(true);
+    // $sheet->getColumnDimension('B')->setAutoSize(true);
+
+    // $lastRow = $sheet->getHighestRow();
+    // $lastColumn = $sheet->getHighestColumn();
+
+    // // Mendapatkan objek perataan (alignment) dari objek gaya (style)
+    // $alignment = $style->getAlignment();
+
+    // // Mengatur perataan teks menjadi tengah (middle align)
+    // $alignment->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+    // $alignment = $sheet->getStyle('A1:B' . $lastRow)->getAlignment();
+    // $alignment->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    // // Menambahkan border pada setiap sel
+    // $borderStyle = [
+    //     'borders' => [
+    //         'allBorders' => [
+    //             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+    //             'color' => ['rgb' => '000000'],
+    //         ],
+    //     ],
+    // ];
+
+
+    // $sheet->getStyle('A2:' . $lastColumn . $lastRow)->applyFromArray($borderStyle);
+
+    // // Memberi warna pada sel A1 hingga B1
+    // $columnStyle = [
+    //     'fill' => [
+    //         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+    //         'startColor' => [
+    //             'rgb' => '00FFFF', // Ganti dengan kode warna yang diinginkan
+    //         ],
+    //     ],
+    // ];
+
+    // $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray($columnStyle);
+
+    // $writer = new Xlsx($spreadsheet);
+    // // Simpan file Excel ke direktori
+    // $filename = 'laporan_keuangan.xlsx';
+    // $savePath = 'Excel/LaporanKeuangan/' . $filename;
+    // $writer->save($savePath);
+
+    // $data['downloadLink'] = base_url('admin/downloadLaporanKeuangan/' . $filename); // Buat link download menggunakan base_url dan nama file
+
 
 
     // public function downloadLaporanKeuangan($filename)

@@ -75,16 +75,36 @@ class M_admin extends CI_Model
         $data = [];
 
         for ($i = 1; $i <= 12; $i++) {
-            $query  = $this->db->query('select sum(total_hrg * total_brg) as total from tb_transaksi where month(waktu)=' . $i . '');
+            $query  = $this->db->query('select sum(total_hrg) as total from tb_transaksi where month(waktu)=' . $i . '');
             $data[] = $query->row()->total === null ? 0 : $query->row()->total;
         }
 
         return $data;
     }
 
+    public function get_barang_habis($min_qty)
+    {
+        $this->db->where('qty <=', $min_qty); // Mengganti '<' menjadi '<=' untuk menyertakan barang habis (qty = 0)
+        $query = $this->db->get('tb_barang');
+        return $query->result();
+    }
+
+
+    public function barangTerlaris()
+    {
+        $query = "SELECT tb_barang.nm_barang, SUM(tb_transaksi_detail.jumlah_jual) as total_terjual
+                  FROM tb_transaksi_detail
+                  JOIN tb_barang ON tb_barang.id_barang = tb_transaksi_detail.id_barang
+                  GROUP BY tb_barang.id_barang
+                  ORDER BY total_terjual DESC
+                  LIMIT 5"; // Ambil 5 barang terlaris
+
+        return $this->db->query($query)->result();
+    }
+
     public function sum_daily()
     {
-        $query = $this->db->query('select sum(total_hrg * total_brg) as total from tb_transaksi where day(waktu)=' . date('d') . '');
+        $query = $this->db->query('select sum(total_hrg) as total from tb_transaksi where day(waktu)=' . date('d') . '');
 
         return $query->row()->total;
     }
@@ -763,7 +783,7 @@ class M_admin extends CI_Model
 
     public function dtTransaksiBarang($startdate, $enddate)
     {
-        $this->db->select('td.id_transaksi_detail, b.barcode, t.waktu, b.nm_barang, td.last_qty, td.jumlah_jual, td.hrg_jual');
+        $this->db->select('td.id_transaksi_detail, b.barcode, t.waktu, b.nm_barang, td.last_qty, td.jumlah_jual, td.hrg_jual, (td.jumlah_jual * td.hrg_jual) AS total_harga');
         $this->db->from('tb_transaksi_detail td');
         $this->db->join('tb_transaksi t', 'td.id_transaksi = t.id_transaksi');
         $this->db->join('tb_barang b', 'td.id_barang = b.id_barang');
@@ -773,10 +793,10 @@ class M_admin extends CI_Model
             $this->db->where('DATE(t.waktu) <=', $enddate);
         }
         // $this->db->group_by('tanggal');
-        $this->db->order_by('waktu', 'DESC');
         // $this->db->group_by('waktu', 'DESC');
         $this->db->where('DATE(t.waktu) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)');
         $this->db->where('DATE(t.waktu) <= CURDATE()');
+        $this->db->order_by('t.waktu', 'DESC');
         $query = $this->db->get();
         $transaksi = $query->result_array();
 
@@ -787,7 +807,7 @@ class M_admin extends CI_Model
 
     public function dtLaporanKeuangan($startdate, $enddate)
     {
-        $this->db->select('DATE(t.waktu) as tanggal, SUM(td.hrg_jual - b.hrg_beli) as total_harga');
+        $this->db->select('DATE(t.waktu) as tanggal, SUM(((td.hrg_jual * td.jumlah_jual) - (b.hrg_beli * td.jumlah_jual))) as total_harga');
         $this->db->from('tb_transaksi_detail td');
         $this->db->join('tb_transaksi t', 'td.id_transaksi = t.id_transaksi');
         $this->db->join('tb_barang b', 'td.id_barang = b.id_barang');
