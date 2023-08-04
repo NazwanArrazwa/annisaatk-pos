@@ -1149,7 +1149,9 @@ else if ($page == 'barangTambah') {
                                 </div>
                                 <div class="form-group">
                                     <label>Barcode</label>
-                                    <input type="text" name="barcode" placeholder="Masukkan Barcode..." value="<?= set_value('barcode') ?>" class="form-control">
+                                    <a href="#" class="border border-primary p-1" id="generateBarcode"><i class="fa fa-gears"></i></a>
+                                    <input type="text" id="barcodeInput" name="barcode" placeholder="Masukkan Barcode..." value="<?= set_value('barcode') ?>" class="form-control">
+
                                     <span class="badge badge-danger"><?php echo strip_tags(form_error('barcode')); ?></span>
                                 </div>
                                 <div class="form-group">
@@ -1209,6 +1211,25 @@ else if ($page == 'barangTambah') {
 
     </div>
     <!-- End of Main Content -->
+    <script>
+        document.getElementById('generateBarcode').addEventListener('click', function() {
+            var uniqueId = generateUniqueId(); // Fungsi untuk menghasilkan nilai unik
+            document.getElementById('barcodeInput').value = uniqueId;
+            // barcodeInput.disabled = true;
+
+            // // Mengatur kembali input setelah beberapa detik (misalnya, 3 detik)
+            // setTimeout(function() {
+            //     barcodeInput.disabled = false;
+            // }, 1000); // 3000 milidetik = 3 detik
+        });
+
+
+        function generateUniqueId() {
+            // Menggunakan angka acak dengan panjang 7 digit
+            var randomNum = Math.floor(Math.random() * 10000000); // 7 digit
+            return randomNum;
+        }
+    </script>
 <?php
 }
 
