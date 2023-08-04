@@ -394,7 +394,6 @@
                         alert("Stock Barang Habis");
                         $("#barcode").val("");
                     } else {
-                        alert("Barang Berhasil Dimasukkan Ke Keranjang");
                         // Lakukan tindakan setelah berhasil menambahkan ke keranjang
                         $("#cart_detail").html(data);
                         updateSubtotal();
@@ -899,6 +898,16 @@
         });
     }
 </script>
+<script>
+    function printBarcode() {
+        var printContents = document.getElementById("barcodeImage").outerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+</script>
+
 <!-- 
 <script>
     var modal = $('#modalData');

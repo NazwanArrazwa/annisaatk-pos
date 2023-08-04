@@ -14,7 +14,7 @@
   $menu_master1 = array('kasir');
   $menu_master2 = array('penjualanBarang', 'laporanPendapatan');
   $menu_master3 = array('riwayatTransaksi', 'transaksiDetail');
-  $menu_master4 = array('barang', 'barangTambah', 'barangEdit', 'kategoriBarang', 'satuanBarang', 'kategoriTambah', 'kategoriEdit', 'satuanTambah', 'satuanEdit');
+  $menu_master4 = array('barang', 'barangTambah', 'barangEdit', 'kategoriBarang', 'satuanBarang', 'kategoriTambah', 'kategoriEdit', 'satuanTambah', 'satuanEdit', 'tampilBarcode');
   $menu_master5 = array('pelanggan', 'pelangganTambah', 'pelangganEdit');
   $menu_master6 = array('berita', 'beritaTambah', 'beritaEdit');
   $menu_master7 = array('user', 'userEdit');
