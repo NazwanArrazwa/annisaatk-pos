@@ -10,8 +10,8 @@ if ($page == 'dashboard') {
             <?php if ($barang_habis) : ?>
                 <div class="row">
                     <div class="col">
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            <strong>Perhatian!</strong> Beberapa barang hampir habis atau habis:
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fa-solid fa-triangle-exclamation"></i><strong>Perhatian!</strong> Beberapa barang hampir habis atau habis:
                             <ul>
                                 <?php foreach ($barang_habis as $barang) : ?>
                                     <li><?= $barang->nm_barang ?> (<?= $barang->qty == 0 ? 'Habis' : 'Hampir habis' ?>)</li>
@@ -376,7 +376,7 @@ else if ($page == 'kasir') {
                             <div class="form-group row">
                                 <label for="input_kembali" class="col-lg-2 control-label">Kembali</label>
                                 <div class="col-lg-8">
-                                    <input type="text" id="input_kembali" name="input_kembali" class="form-control" value="0" readonly>
+                                    <input type="number" id="input_kembali" name="input_kembali" class="form-control" value="0" readonly>
                                 </div>
                             </div>
                         </div>
@@ -487,8 +487,6 @@ else if ($page == 'kasir') {
 
         </div>
     </div>
-
-
 
     <!-- /.container-fluid -->
     </div>
@@ -951,8 +949,8 @@ else if ($page == 'barang') {
             <?php if ($barang_habis) : ?>
                 <div class="row">
                     <div class="col">
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            <strong>Perhatian!</strong> Beberapa barang hampir habis atau habis:
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fa-solid fa-triangle-exclamation"></i><strong>Perhatian!</strong> Beberapa barang hampir habis atau habis:
                             <ul>
                                 <?php foreach ($barang_habis as $b) : ?>
                                     <li><?= $b->nm_barang ?> (<?= $b->qty == 0 ? 'Habis' : 'Hampir habis' ?>)</li>

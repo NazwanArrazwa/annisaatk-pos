@@ -78,6 +78,7 @@
 <!-- <script src="<?php echo base_url('assets/'); ?>vendor/jquery-datetimepicker/jquery.js"></script> -->
 
 <!-- <script src="<?php echo base_url('assets/'); ?>vendor/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js"></script> -->
+
 <script>
     // Inisialisasi DataTable Server Side
     $('#barangTable').DataTable({
@@ -181,7 +182,7 @@
         // Menghitung total setelah diskon
         let totalSetelahDiskon = total - diskon;
         $.ajax({
-            url: "<?= base_url(); ?>/admin/save_orders/",
+            url: "<?= base_url(); ?>admin/save_orders/",
             data: {
                 kasir: $('#kasir').val(),
                 kode_transaksi: $('#kode_transaksi').val(),
@@ -230,6 +231,9 @@
             }
         });
     }
+
+
+
 
 
     function updateSubtotal() {
@@ -360,20 +364,6 @@
 
 
 
-    $(document).ready(function() {
-        $("#bayar").text('Bayar : 0'); // Set nilai awal input_bayar menjadi 0
-
-        $("#input_bayar").on("input", function() {
-            var bayar = $(this).val();
-            var formattedBayar = parseFloat(bayar).toLocaleString('id-ID');
-            $("#bayar").text("Bayar: " + formattedBayar);
-            updateSubtotal();
-        });
-    });
-
-
-
-
 
     $("#barcode").on("keydown", function(event) {
         if (event.keyCode === 13) { // Check if Enter key is pressed (key code 13)
@@ -420,6 +410,7 @@
         updateSubtotal();
 
 
+
         // Memulihkan data keranjang belanja dari penyimpanan lokal saat halaman dimuat
         //restoreCartData();
 
@@ -462,16 +453,6 @@
         });
 
 
-
-        // // Define a variable to store the previous quantity
-        // var previousQuantity = 0;
-
-        // // Attach a 'focus' event handler to the input field with class 'stock'
-        // $(document).on('focus', '.stock', function() {
-        //     // Store the current quantity in 'previousQuantity' when the input field is focused
-        //     previousQuantity = $(this).val();
-        // });
-        // Attach a 'change' event handler to the input field with class 'stock'
         $(document).on('change', '.stock', function() {
             var inputField = $(this);
             var product_id = inputField.attr('id');
@@ -505,9 +486,6 @@
                 alert("Silakan masukkan jumlah yang valid!");
             }
         });
-
-        // Rest of your code remains unchanged...
-
 
 
         $(document).on('click', '.remove_inventory', function() {
@@ -552,34 +530,11 @@
         });
 
 
+        $("#input_bayar").on("input", function() {
+            updateSubtotal();
+        });
+
     });
-
-    // // Fungsi untuk mengupdate subtotal saat jumlah berubah
-    // $(document).ready(function() {
-    //     // Fungsi untuk mengupdate subtotal saat jumlah berubah
-    //     function updateSubtotal(rowid, qty) {
-    //         $.ajax({
-    //             url: '<?= base_url('admin/update_subtotal') ?>',
-    //             method: 'POST',
-    //             data: {
-    //                 rowid: rowid,
-    //                 qty: qty
-    //             },
-    //             success: function(response) {
-    //                 // Update the subtotal in the table
-    //                 $('#shoping_cart_table tr[data-rowid="' + rowid + '"] .subtotal').html(response);
-    //                 location.reload();
-    //             }
-    //         });
-    //     }
-
-    //     // Event listener saat jumlah berubah
-    //     $(document).on('change', '.qty', function() {
-    //         var rowid = $(this).data('rowid');
-    //         var quantity = $(this).val();
-    //         updateSubtotal(rowid, quantity);
-    //     });
-    // });
 
     function readURL(input) {
         if (input.files && input.files[0]) {

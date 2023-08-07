@@ -92,15 +92,16 @@ class M_admin extends CI_Model
 
     public function barangTerlaris()
     {
-        $query = "SELECT tb_barang.nm_barang, SUM(tb_transaksi_detail.jumlah_jual) as total_terjual
-                  FROM tb_transaksi_detail
-                  JOIN tb_barang ON tb_barang.id_barang = tb_transaksi_detail.id_barang
-                  GROUP BY tb_barang.id_barang
-                  ORDER BY total_terjual DESC
-                  LIMIT 5"; // Ambil 5 barang terlaris
+        $this->db->select('tb_barang.nm_barang, SUM(tb_transaksi_detail.jumlah_jual) as total_terjual');
+        $this->db->from('tb_transaksi_detail');
+        $this->db->join('tb_barang', 'tb_barang.id_barang = tb_transaksi_detail.id_barang');
+        $this->db->group_by('tb_barang.id_barang');
+        $this->db->order_by('total_terjual', 'DESC');
+        $this->db->limit(5);
 
-        return $this->db->query($query)->result();
+        return $this->db->get()->result();
     }
+
 
     public function sum_daily()
     {
