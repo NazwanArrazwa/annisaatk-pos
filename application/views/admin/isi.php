@@ -1223,8 +1223,8 @@ else if ($page == 'barangTambah') {
 
 
         function generateUniqueId() {
-            // Menggunakan angka acak dengan panjang 7 digit
-            var randomNum = Math.floor(Math.random() * 10000000); // 7 digit
+            // Menggunakan angka acak dengan panjang 13 digit
+            var randomNum = Math.floor(Math.random() * 10000000000000); // 13 digit
             return randomNum;
         }
     </script>
