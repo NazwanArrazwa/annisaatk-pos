@@ -880,6 +880,7 @@ else if ($page == 'transaksiDetail') {
         <!-- Page Heading -->
         <h1 class="h3 mb-2 text-gray-800">Detail Transaksi - <?php echo $detail[0]['kode_transaksi']; ?></h1>
 
+
         <div class="card shadow mb-4">
             <div class="card-body">
                 <div class="table-responsive">
